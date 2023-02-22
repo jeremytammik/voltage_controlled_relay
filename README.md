@@ -6,7 +6,7 @@
 
 ## Authors
 
-Allan Kipkirui Koech
+[Allan Kipkirui Koech](https://github.com/allankkoech)
 and Jeremy Tammik,
 [The Building Coder](http://thebuildingcoder.typepad.com),
 [Autodesk Platform Services APS](http://aps.autodesk.com),
