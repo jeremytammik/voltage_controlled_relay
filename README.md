@@ -1,5 +1,9 @@
 # Voltage Controlled Relay
 
+## Voltage Divider
+
+- [What is the most efficient voltage divider for Arduino?](https://arduino.stackexchange.com/questions/78768/what-is-the-most-efficient-voltage-divider-for-arduino)
+
 ## Authors
 
 Allan Kipkirui Koech
