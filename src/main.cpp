@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <Arduino.h>
 
 // Load 1
@@ -26,9 +27,6 @@
 
 // Voltage Input Sensor
 #define VOLTAGE_INPUT_SENSOR  36      // GPIO36
-int VOLTAGE_ADC_VALUE = 0;            // ADC value
-double voltageValue = 0;              // ADC conversion to volts
-double realVoltage = 0;               // Real battery voltage
 
 // Voltage divider resistors Ra + Rb in Ohm
 // Their resistance in parallel should come to ca. 10k, cf.
@@ -60,6 +58,7 @@ void setOn(int pin);
 void setOff(int pin);
 float checkVoltage();
 void dropLoads(bool ok);
+void Serialprintln(const char* input...);
 
 void setup() {
   // Setup Serial
@@ -177,19 +176,22 @@ void setOff(int pin) {
 }
 
 float checkVoltage() {
-  VOLTAGE_ADC_VALUE = analogRead(VOLTAGE_INPUT_SENSOR);
-  voltageValue = (VOLTAGE_ADC_VALUE * 3.3) / (4095);
+  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR);
+  double adc_volt = (adc_raw * 3.3) / (4095);
+  double battery_volt = adc_volt * (RA/RB);
 
-  realVoltage = voltageValue * (RA/RB);
+  Serialprintln(
+    "checkVoltage ADC raw %d = %fV ~ %fV battery",
+    adc_raw, adc_volt, battery_volt);
 
-  Serial.print("Voltages\tADC=");
-  Serial.print(VOLTAGE_ADC_VALUE);
-  Serial.print("\tVOLTS=");
-  Serial.print(voltageValue);
-  Serial.print("\tBAT VOLTAGE=");
-  Serial.println(realVoltage);
+  //Serial.print("ADC raw=");
+  //Serial.print(adc_raw);
+  //Serial.print("\tVOLTS=");
+  //Serial.print(adc_volt);
+  //Serial.print("\tBAT VOLTAGE=");
+  //Serial.println(real_volt);
 
-  return realVoltage;
+  return battery_volt;
 }
 
 // Turn ON/OFF the loads
@@ -236,4 +238,24 @@ void dropLoads(bool ok) {
     setOn(LOAD_6_LED);
   }
    
+}
+
+// https://arduino.stackexchange.com/questions/56517/formatting-strings-in-arduino-for-output
+void Serialprintln(const char* input...) {
+  va_list args;
+  va_start(args, input);
+  for(const char* i=input; *i!=0; ++i) {
+    if(*i!='%') { Serial.print(*i); continue; }
+    switch(*(++i)) {
+      case '%': Serial.print('%'); break;
+      case 's': Serial.print(va_arg(args, char*)); break;
+      case 'd': Serial.print(va_arg(args, int), DEC); break;
+      case 'b': Serial.print(va_arg(args, int), BIN); break;
+      case 'o': Serial.print(va_arg(args, int), OCT); break;
+      case 'x': Serial.print(va_arg(args, int), HEX); break;
+      case 'f': Serial.print(va_arg(args, double), 2); break;
+    }
+  }
+  Serial.println();
+  va_end(args);
 }
