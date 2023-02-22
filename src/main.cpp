@@ -120,26 +120,25 @@ void loop() {
   // after the specified delay
   if( volts <= VOLTAGE_THRESHOLD ) 
   {
-      voltageIsAboveThreshold = false;
+    voltageIsAboveThreshold = false;
 
-      if(voltageIsBelowThreshold) 
+    if(voltageIsBelowThreshold) 
+    {
+      // Flag had been set initially
+
+      if( ((long)(millis() - belowThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
       {
-        // Flag had been set initially
-
-        if( ((long)(millis() - belowThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
-        {
-          // Switch off the loads
-          dropLoads(true);
-          voltageIsBelowThreshold = false;
-
-        }
+        // Switch off the loads
+        dropLoads(true);
+        voltageIsBelowThreshold = false;
       }
+    }
 
-      else
-      {
-        voltageIsBelowThreshold = true;
-        belowThresholdTriggerTimerStart = millis();
-      }
+    else
+    {
+      voltageIsBelowThreshold = true;
+      belowThresholdTriggerTimerStart = millis();
+    }
   } 
   
   else 
@@ -147,23 +146,23 @@ void loop() {
     voltageIsBelowThreshold = false;
 
     if(voltageIsAboveThreshold) 
+    {
+      // Flag had been set initially
+
+      if( ((long)(millis() - aboveThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
       {
-        // Flag had been set initially
+        // Switch off the loads
+        dropLoads(false);
+        voltageIsAboveThreshold = false;
 
-        if( ((long)(millis() - aboveThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
-        {
-          // Switch off the loads
-          dropLoads(false);
-          voltageIsAboveThreshold = false;
-
-        }
       }
+    }
 
-      else
-      {
-        voltageIsAboveThreshold = true;
-        aboveThresholdTriggerTimerStart = millis();
-      }
+    else
+    {
+      voltageIsAboveThreshold = true;
+      aboveThresholdTriggerTimerStart = millis();
+    }
   }
 
   delay(500); // Sleep for half a second
@@ -192,7 +191,6 @@ float checkVoltage() {
 
   return realVoltage;
 }
-
 
 // Turn ON/OFF the loads
 void dropLoads(bool ok) {
