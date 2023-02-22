@@ -30,12 +30,15 @@ int VOLTAGE_ADC_VALUE = 0;            // ADC value
 double voltageValue = 0;              // ADC conversion to volts
 double realVoltage = 0;               // Real battery voltage
 
-// Voltage divider resistors
-// Recommended 10k, 1k - 
-// At 30v battery, voltage will be 30/10 = 3v at ESP
-// At 24v battery, voltage will be 2.4 on ESP
-#define RA      10  // 10k Ohms
-#define RB      1   // 1k Ohms
+// Voltage divider resistors Ra + Rb
+// Their resistance in parallel should come to ca. 10k, cf.
+// https://arduino.stackexchange.com/questions/78768/what-is-the-most-efficient-voltage-divider-for-arduino
+// Max ESP32 ADC input voltage is 3.3V, cf. 
+// https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/
+// 30V converts to 3.289V using Ra = 81.2k = 75k + 6.2k and Rb = 10k, cf.
+// https://ohmslawcalculator.com/voltage-divider-calculator
+#define RA_OHM 81200
+#define RB_OHM 10000
 
 // Voltage threshold cut off
 #define VOLTAGE_THRESHOLD 24 // volts
