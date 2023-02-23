@@ -4,102 +4,80 @@
 #include "readvolt.h"
 #include "util.h"
 
-// Voltage threshold cut off
-#define VOLTAGE_THRESHOLD 24 // volts
-#define DELAY_B4_SWITCHING 1000*60*1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
+void dropLoads();
 
-// Flag to know when he first loop cycle begins so as to set default relay state
-bool appIsStarting = true;
+// Voltage thresholds to turn on and off relay R1 and R2
+float voltageTurnOnR1 = 25.0;
+float voltageTurnOffR1 = 24.0;
+float voltageTurnOnR2 = 27.0;
+float voltageTurnOffR2 = 26.5;
 
-// When voltage is below the set threshold
-long belowThresholdTriggerTimerStart = 0;
-bool voltageIsBelowThreshold = false;
+// Create new FSM
+YA_FSM stateMachine;
 
-// When voltage is above threshold
-long aboveThresholdTriggerTimerStart = 0;
-bool voltageIsAboveThreshold = false;
+// State Alias
+enum State { OFF, R1_ON, R2_ON };
 
-// Function declarations
-void setOn(int pin);
-void setOff(int pin);
-void dropLoads(bool ok);
+// Helper for print labels instead integer when state change
+const char * const stateName[] PROGMEM = { "OFF", "R1_ON", "R2_ON" };
+
+#define MIN_TIME_MS 1000*60*1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
+
+// Output variables
+bool r1on = false;
+bool r2on = false;
+
+// Define "on entering" state machine callback function
+void onEnter() {
+  Serial.print(stateMachine.ActiveStateName());
+  Serial.println(F(" enter")); 
+}
+
+// Define "on leaving" state machine callback function
+void onExit() {
+  Serial.print(stateMachine.ActiveStateName());
+  Serial.println(F(" leave"));
+}
+
+// Setup the State Machine
+void setupStateMachine() {
+  // Follow the order of defined enumeration for the state definition (will be used as index)
+  // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
+  stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+  stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+  stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+
+  stateMachine.AddAction(R1_ON, YA_FSM::N, r1on); // N -> while state is active led is ON
+  stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
+
+  // Add transitions with related trigger input callback functions
+  stateMachine.AddTransition(OFF, R1_ON, [](){return readVoltage() > voltageTurnOnR1;} );    
+  stateMachine.AddTransition(R1_ON, OFF, [](){return readVoltage() < voltageTurnOffR1;} );    
+  stateMachine.AddTransition(R1_ON, R2_ON, [](){return readVoltage() > voltageTurnOnR2;} );    
+  stateMachine.AddTransition(R2_ON, R1_ON, [](){return readVoltage() < voltageTurnOffR2;} );    
+}
 
 void setup() {
-  // Setup Serial
+  setupPins(); // set up Input/Output
   Serial.begin(115200);
-
-  setupPins();
-
-  // Set initial states
-  dropLoads(true); // turn off all loads
+  while(!Serial) {}  // Needed for native USB port only
+  Serial.println(F("Starting the Voltage Controlled Switch...\n"));
+  setupStateMachine();
+  dropLoads(); // turn off all loads
 }
 
 void loop() {
-  float volts = readVoltage();
-
-  // Run this block only once when the application starts
-  // Check for current voltage and set the relays as ON/OFF
-  if(appIsStarting) 
-  {
-    appIsStarting = false;
-
-    if( volts <= VOLTAGE_THRESHOLD )
-    {
-      dropLoads(true);
-    }
-    else
-    {
-      dropLoads(false);
-    }
+  // Update State Machine
+  if(stateMachine.Update()){
+    Serial.print(F("Active state: "));
+    Serial.println(stateMachine.ActiveStateName());
   }
 
-  // Runs in every cycle, check voltage of the battery and turns ON/OFF the relays
-  // after the specified delay
-  if( volts <= VOLTAGE_THRESHOLD ) 
-  {
-    voltageIsAboveThreshold = false;
-
-    if(voltageIsBelowThreshold) 
-    {
-      // Flag had been set initially
-
-      if( ((long)(millis() - belowThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
-      {
-        // Switch off the loads
-        dropLoads(true);
-        voltageIsBelowThreshold = false;
-      }
-    }
-    else
-    {
-      voltageIsBelowThreshold = true;
-      belowThresholdTriggerTimerStart = millis();
-    }
-  } 
-  
-  else 
-  {
-    voltageIsBelowThreshold = false;
-
-    if(voltageIsAboveThreshold) 
-    {
-      // Flag had been set initially
-
-      if( ((long)(millis() - aboveThresholdTriggerTimerStart)) >= DELAY_B4_SWITCHING ) 
-      {
-        // Switch off the loads
-        dropLoads(false);
-        voltageIsAboveThreshold = false;
-
-      }
-    }
-
-    else
-    {
-      voltageIsAboveThreshold = true;
-      aboveThresholdTriggerTimerStart = millis();
-    }
-  }
+  // Set outputs
+  digitalWrite(LOAD_1_LED, r1on);
+  digitalWrite(LOAD_1_RELAY, r1on);
+  digitalWrite(LOAD_2_LED, r2on);
+  digitalWrite(LOAD_2_RELAY, r2on);
 
   delay(500); // Sleep for half a second
 }
@@ -112,50 +90,25 @@ void setOff(int pin) {
   digitalWrite(pin, LOW);
 }
 
-// Turn ON/OFF the loads
-void dropLoads(bool ok) {
-  if(ok) // turn off loads
-  {
-    setOff(LOAD_1_RELAY);
-    setOff(LOAD_1_LED);
+// Turn off the loads
+void dropLoads() {
+  setOff(LOAD_1_RELAY);
+  setOff(LOAD_1_LED);
 
-    setOff(LOAD_2_RELAY);
-    setOff(LOAD_2_LED);
+  setOff(LOAD_2_RELAY);
+  setOff(LOAD_2_LED);
 
-    setOff(LOAD_3_RELAY);
-    setOff(LOAD_3_LED);
+  setOff(LOAD_3_RELAY);
+  setOff(LOAD_3_LED);
 
-    setOff(LOAD_4_RELAY);
-    setOff(LOAD_4_LED);
+  setOff(LOAD_4_RELAY);
+  setOff(LOAD_4_LED);
 
-    setOff(LOAD_5_RELAY);
-    setOff(LOAD_5_LED);
+  setOff(LOAD_5_RELAY);
+  setOff(LOAD_5_LED);
 
-    setOff(LOAD_6_RELAY);
-    setOff(LOAD_6_LED);
-  }
-
-  else // turn on loads
-  {
-    setOn(LOAD_1_RELAY);
-    setOn(LOAD_1_LED);
-
-    setOn(LOAD_2_RELAY);
-    setOn(LOAD_2_LED);
-
-    setOn(LOAD_3_RELAY);
-    setOn(LOAD_3_LED);
-
-    setOn(LOAD_4_RELAY);
-    setOn(LOAD_4_LED);
-
-    setOn(LOAD_5_RELAY);
-    setOn(LOAD_5_LED);
-
-    setOn(LOAD_6_RELAY);
-    setOn(LOAD_6_LED);
-  }
-   
+  setOff(LOAD_6_RELAY);
+  setOff(LOAD_6_LED);
 }
 
 /*
