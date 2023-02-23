@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "state.h"
 #include "util.h"
 
 // Load 1
@@ -39,6 +40,8 @@
 // Vbat = Vadc * (Ra+Rb)/Rb
 #define RA 81200
 #define RB 10000
+
+enum state_codes cur_state = all_off;
 
 // Voltage threshold cut off
 #define VOLTAGE_THRESHOLD 24 // volts
@@ -236,6 +239,7 @@ void dropLoads(bool ok) {
 
 /*
 // State machine
+// https://stackoverflow.com/questions/1371460/state-machines-tutorials
 
 int entry_state(void);
 int foo_state(void);
