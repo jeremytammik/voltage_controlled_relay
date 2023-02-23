@@ -1,5 +1,5 @@
-#include <stdarg.h>
 #include <Arduino.h>
+#include "util.h"
 
 // Load 1
 #define LOAD_1_RELAY    19  // GPIO19
@@ -60,7 +60,6 @@ void setOn(int pin);
 void setOff(int pin);
 float readVoltage();
 void dropLoads(bool ok);
-void Serialprintln(const char* input...);
 
 void setup() {
   // Setup Serial
@@ -235,22 +234,51 @@ void dropLoads(bool ok) {
    
 }
 
-// https://arduino.stackexchange.com/questions/56517/formatting-strings-in-arduino-for-output
-void Serialprintln(const char* input...) {
-  va_list args;
-  va_start(args, input);
-  for(const char* i=input; *i!=0; ++i) {
-    if(*i!='%') { Serial.print(*i); continue; }
-    switch(*(++i)) {
-      case '%': Serial.print('%'); break;
-      case 's': Serial.print(va_arg(args, char*)); break;
-      case 'd': Serial.print(va_arg(args, int), DEC); break;
-      case 'b': Serial.print(va_arg(args, int), BIN); break;
-      case 'o': Serial.print(va_arg(args, int), OCT); break;
-      case 'x': Serial.print(va_arg(args, int), HEX); break;
-      case 'f': Serial.print(va_arg(args, double), 2); break;
+/*
+// State machine
+
+int entry_state(void);
+int foo_state(void);
+int bar_state(void);
+int exit_state(void);
+
+// array and enum below must be in sync! 
+int (* state[])(void) = { entry_state, foo_state, bar_state, exit_state};
+enum state_codes { entry, foo, bar, end};
+
+enum ret_codes { ok, fail, repeat};
+struct transition {
+    enum state_codes src_state;
+    enum ret_codes   ret_code;
+    enum state_codes dst_state;
+};
+// transitions from end state aren't needed 
+struct transition state_transitions[] = {
+    {entry, ok,     foo},
+    {entry, fail,   end},
+    {foo,   ok,     bar},
+    {foo,   fail,   end},
+    {foo,   repeat, foo},
+    {bar,   ok,     end},
+    {bar,   fail,   end},
+    {bar,   repeat, foo}};
+
+#define EXIT_STATE end
+#define ENTRY_STATE entry
+
+int main(int argc, char *argv[]) {
+    enum state_codes cur_state = ENTRY_STATE;
+    enum ret_codes rc;
+    int (* state_fun)(void);
+
+    for (;;) {
+        state_fun = state[cur_state];
+        rc = state_fun();
+        if (EXIT_STATE == cur_state)
+            break;
+        cur_state = lookup_transitions(cur_state, rc);
     }
-  }
-  Serial.println();
-  va_end(args);
+
+    return EXIT_SUCCESS;
 }
+*/
