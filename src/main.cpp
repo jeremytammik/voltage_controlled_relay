@@ -58,7 +58,7 @@ bool voltageIsAboveThreshold = false;
 // Function declarations
 void setOn(int pin);
 void setOff(int pin);
-float checkVoltage();
+float readVoltage();
 void dropLoads(bool ok);
 void Serialprintln(const char* input...);
 
@@ -98,7 +98,7 @@ void setup() {
 }
 
 void loop() {
-  float volts = checkVoltage();
+  float volts = readVoltage();
 
   // Run this block only once when the application starts
   // Check for current voltage and set the relays as ON/OFF
@@ -177,13 +177,13 @@ void setOff(int pin) {
   digitalWrite(pin, LOW);
 }
 
-float checkVoltage() {
+float readVoltage() {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
   double adc_volt = (adc_raw * 3.3) / (4095);
   double battery_volt = adc_volt * ((RA+RB)/RB);
 
   Serialprintln(
-    "checkVoltage ADC raw %d = %fV ~ %fV battery",
+    "readVoltage ADC raw %d = %fV ~ %fV battery",
     adc_raw, adc_volt, battery_volt);
 
   return battery_volt;
