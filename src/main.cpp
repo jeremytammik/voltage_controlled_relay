@@ -35,8 +35,11 @@
 // https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/
 // 30V converts to 3.289V using Ra = 81.2k = 75k + 6.2k and Rb = 10k, cf.
 // https://ohmslawcalculator.com/voltage-divider-calculator
+// Vadc = Vbat * Rb/(Ra+Rb)
+// Vbat = Vadc * (Ra+Rb)/Rb
 #define RA 81200
 #define RB 10000
+#define A2B ((RA+RB)/RB)
 
 // Voltage threshold cut off
 #define VOLTAGE_THRESHOLD 24 // volts
@@ -178,7 +181,7 @@ void setOff(int pin) {
 float checkVoltage() {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR);
   double adc_volt = (adc_raw * 3.3) / (4095);
-  double battery_volt = adc_volt * (RA/RB);
+  double battery_volt = adc_volt * A2B;
 
   Serialprintln(
     "checkVoltage ADC raw %d = %fV ~ %fV battery",
