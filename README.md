@@ -16,6 +16,13 @@ The [voltage divider calculator](https://ohmslawcalculator.com/voltage-divider-c
 - Vadc = Vbat * Rb/(Ra+Rb)
 - Vbat = Vadc * (Ra+Rb)/Rb
 
+## State Machine
+
+The relay states and transitions are managed by a state machine.
+We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
+by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta), 
+described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac).
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech)
