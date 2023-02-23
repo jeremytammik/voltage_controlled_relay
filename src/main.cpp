@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include "state.h"
+#include "YA_FSM.h"
+#include "readvolt.h"
 #include "util.h"
 
 // Load 1
@@ -26,23 +27,6 @@
 #define LOAD_6_RELAY    25  // GPIO25
 #define LOAD_6_LED      33  // GPIO33
 
-// Voltage Input Sensor
-#define VOLTAGE_INPUT_SENSOR  36      // GPIO36
-
-// Voltage divider resistors Ra + Rb in Ohm
-// Their resistance in parallel should come to ca. 10k, cf.
-// https://arduino.stackexchange.com/questions/78768/what-is-the-most-efficient-voltage-divider-for-arduino
-// Max ESP32 ADC input voltage is 3.3V, cf. 
-// https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/
-// 30V converts to 3.289V using Ra = 81.2k = 75k + 6.2k and Rb = 10k, cf.
-// https://ohmslawcalculator.com/voltage-divider-calculator
-// Vadc = Vbat * Rb/(Ra+Rb)
-// Vbat = Vadc * (Ra+Rb)/Rb
-#define RA 81200
-#define RB 10000
-
-enum state_codes cur_state = all_off;
-
 // Voltage threshold cut off
 #define VOLTAGE_THRESHOLD 24 // volts
 #define DELAY_B4_SWITCHING 1000*60*1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
@@ -61,7 +45,6 @@ bool voltageIsAboveThreshold = false;
 // Function declarations
 void setOn(int pin);
 void setOff(int pin);
-float readVoltage();
 void dropLoads(bool ok);
 
 void setup() {
@@ -175,18 +158,6 @@ void setOn(int pin) {
 
 void setOff(int pin) {
   digitalWrite(pin, LOW);
-}
-
-float readVoltage() {
-  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
-  float adc_volt = (adc_raw * 3.3) / (4095);
-  float battery_volt = adc_volt * ((RA+RB)/RB);
-
-  Serialprintln(
-    "readVoltage ADC raw %d = %fV ~ %fV battery",
-    adc_raw, adc_volt, battery_volt);
-
-  return battery_volt;
 }
 
 // Turn ON/OFF the loads
