@@ -18,7 +18,14 @@ The [voltage divider calculator](https://ohmslawcalculator.com/voltage-divider-c
 
 ## State Machine
 
-The relay states and transitions are managed by a state machine.
+The relay states and transitions are managed by a state machine:
+
+<center>
+<img src="img/2023-02-23_state_machine.png" alt="State machine" title="State machine" width="500"/> <!-- 1004 x 312 pixels -->
+</center>
+
+The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
+
 We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
 by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta), 
 described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac) and 
