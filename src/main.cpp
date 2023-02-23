@@ -178,8 +178,8 @@ void setOff(int pin) {
 
 float readVoltage() {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
-  double adc_volt = (adc_raw * 3.3) / (4095);
-  double battery_volt = adc_volt * ((RA+RB)/RB);
+  float adc_volt = (adc_raw * 3.3) / (4095);
+  float battery_volt = adc_volt * ((RA+RB)/RB);
 
   Serialprintln(
     "readVoltage ADC raw %d = %fV ~ %fV battery",

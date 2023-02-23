@@ -6,6 +6,9 @@
 
 // Serialprintln - stdarg variable argument printing utility function
 // https://arduino.stackexchange.com/questions/56517/formatting-strings-in-arduino-for-output
+// src/util.cpp:21:43: warning: 'float' is promoted to 'double' when passed through '...'
+// src/util.cpp:21:43: note: (so you should pass 'double' not 'float' to 'va_arg')
+// src/util.cpp:21:43: note: if this code is reached, the program will abort
 void Serialprintln(const char* input...) {
   va_list args;
   va_start(args, input);
