@@ -39,7 +39,6 @@
 // Vbat = Vadc * (Ra+Rb)/Rb
 #define RA 81200
 #define RB 10000
-#define A2B ((RA+RB)/RB)
 
 // Voltage threshold cut off
 #define VOLTAGE_THRESHOLD 24 // volts
@@ -179,20 +178,13 @@ void setOff(int pin) {
 }
 
 float checkVoltage() {
-  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR);
+  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
   double adc_volt = (adc_raw * 3.3) / (4095);
-  double battery_volt = adc_volt * A2B;
+  double battery_volt = adc_volt * ((RA+RB)/RB);
 
   Serialprintln(
     "checkVoltage ADC raw %d = %fV ~ %fV battery",
     adc_raw, adc_volt, battery_volt);
-
-  //Serial.print("ADC raw=");
-  //Serial.print(adc_raw);
-  //Serial.print("\tVOLTS=");
-  //Serial.print(adc_volt);
-  //Serial.print("\tBAT VOLTAGE=");
-  //Serial.println(real_volt);
 
   return battery_volt;
 }
