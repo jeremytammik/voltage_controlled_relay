@@ -27,4 +27,3 @@ float readVoltage() {
 
   return battery_volt;
 }
-
