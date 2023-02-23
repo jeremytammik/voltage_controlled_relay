@@ -21,7 +21,10 @@ The [voltage divider calculator](https://ohmslawcalculator.com/voltage-divider-c
 The relay states and transitions are managed by a state machine.
 We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
 by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta), 
-described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac).
+described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac) and 
+equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762).
+
+It would be cool to set up such a simulation for this project as well.
 
 ## Authors
 
