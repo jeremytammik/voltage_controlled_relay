@@ -252,6 +252,7 @@ struct transition {
     enum ret_codes   ret_code;
     enum state_codes dst_state;
 };
+
 // transitions from end state aren't needed 
 struct transition state_transitions[] = {
     {entry, ok,     foo},

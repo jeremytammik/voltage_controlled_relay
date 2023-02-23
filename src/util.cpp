@@ -1,3 +1,5 @@
+// util.cpp -- utility functions
+
 #include <stdarg.h>
 #include <Arduino.h>
 #include "util.h"
