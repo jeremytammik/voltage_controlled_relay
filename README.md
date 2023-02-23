@@ -2,8 +2,7 @@
 
 ## Voltage Divider
 
-We need to convert the input battery voltage range [24V,30V] to fit into the ESP32 ADC input voltage range [0V,3.3V]. 
-Max ESP32 ADC input voltage is 3.3V, 
+We need to convert the input battery voltage range [24V,30V] to fit into the ESP32 ADC input voltage range [0V,3.3V], 
 cf. [ESP32 ADC tutorial &ndash; read analog voltage in Arduino](https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/).
 For simplicity, we implement a simple voltage divider using resistors.
 Unfortunately, this means that the lower part of the range will never be used.
