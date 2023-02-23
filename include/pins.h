@@ -1,4 +1,4 @@
-// pins.h -- defile load relay and led pins
+// pins.h -- set up load relay, led and voltage sensor pins
 
 // Load 1
 #define LOAD_1_RELAY    19  // GPIO19
@@ -23,3 +23,8 @@
 // Load 6
 #define LOAD_6_RELAY    25  // GPIO25
 #define LOAD_6_LED      33  // GPIO33
+
+// Voltage Input Sensor
+#define VOLTAGE_INPUT_SENSOR  36      // GPIO36
+
+void setupPins();

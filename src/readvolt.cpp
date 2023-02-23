@@ -1,6 +1,7 @@
 // readvolt.cpp -- read voltage
 
 #include <Arduino.h>
+#include "pins.h"
 #include "util.h"
 #include "readvolt.h"
 
