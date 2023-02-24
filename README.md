@@ -26,7 +26,7 @@ The relay states and transitions are managed by a state machine
 </center>
 
 The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
-Or, to be more precise, the state transition does not hapopen until the trigger persists for a certain amount of time.
+Or, to be more precise, the state transition does not happen until the trigger persists for a certain amount of time.
 The trigger itself includes a minimum timespan to cause the state change.
 
 We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
