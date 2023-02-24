@@ -31,10 +31,10 @@ The trigger itself includes a minimum timespan to cause the state change.
 
 We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
 by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta), 
-described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac) and 
-equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762),
+described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac),
 since it includes functionality to support minimum and maximum timeouts for each state.
-It would be cool to set up such a wokwi simulation for this project as well.
+It is also equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762).
+It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
 ## Authors
