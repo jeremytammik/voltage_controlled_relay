@@ -22,6 +22,7 @@ The relay states and transitions are managed by a state machine:
 
 <center>
 <img src="img/2023-02-23_state_machine.png" alt="State machine" title="State machine" width="500"/> <!-- 1004 x 312 pixels -->
+<p style="font-size: 80%; font-style:italic">Generated using <a href="https://www.madebyevan.com/fsm/">Finite State Machine Designer</a></p>
 </center>
 
 The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
