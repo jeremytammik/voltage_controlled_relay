@@ -37,6 +37,15 @@ It is also equipped with a [wokwi simulation](https://wokwi.com/projects/3382484
 It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
+## Board
+
+I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/products/SBC-NodeMCU-ESP32):
+
+<center>
+<img src="img/2023-02-2023-02-24_joyit_nodemcu_esp32_pins.png" alt="Joy-it NODEMCU ESP32 pins" title="Joy-it NODEMCU ESP32 pins" width="500"/> <!-- 1788 x 1318 pixels -->
+</center>
+
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech)
