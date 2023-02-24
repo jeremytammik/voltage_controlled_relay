@@ -33,7 +33,7 @@ described in [Let's learn how to use finite state machine with Arduino](https://
 equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762),
 since it includes functionality to support minimum and maximum timeouts for each state.
 
-It would be cool to set up such a simulation for this project as well.
+It would be cool to set up such a wokwi simulation for this project as well.
 
 ## Authors
 
