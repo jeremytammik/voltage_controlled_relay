@@ -16,11 +16,12 @@ float voltageTurnOffR2 = 26.5;
 YA_FSM stateMachine;
 
 // State Alias
-enum State { OFF, R1_ON, R2_ON };
+enum State { START, OFF, R1_ON, R2_ON };
 
 // Helper for print labels instead integer when state change
-const char * const stateName[] PROGMEM = { "OFF", "R1_ON", "R2_ON" };
+const char * const stateName[] PROGMEM = { "START", "OFF", "R1_ON", "R2_ON" };
 
+// Minimum time to remain in each state except start
 #define MIN_TIME_MS 1000*60*1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
 
 // Output variables
@@ -43,6 +44,7 @@ void onExit() {
 void setupStateMachine() {
   // Follow the order of defined enumeration for the state definition (will be used as index)
   // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
+  stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
   stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
   stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
   stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
@@ -51,6 +53,7 @@ void setupStateMachine() {
   stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
 
   // Add transitions with related trigger input callback functions
+  stateMachine.AddTransition(START, R1_ON, [](){return readVoltage() > voltageTurnOnR1;} );    
   stateMachine.AddTransition(OFF, R1_ON, [](){return readVoltage() > voltageTurnOnR1;} );    
   stateMachine.AddTransition(R1_ON, OFF, [](){return readVoltage() < voltageTurnOffR1;} );    
   stateMachine.AddTransition(R1_ON, R2_ON, [](){return readVoltage() > voltageTurnOnR2;} );    
