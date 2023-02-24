@@ -53,11 +53,11 @@ void setupStateMachine() {
   stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
 
   // Add transitions with related trigger input callback functions
-  stateMachine.AddTransition(START, R1_ON, [](){return readVoltage() > voltageTurnOnR1;} );    
-  stateMachine.AddTransition(OFF, R1_ON, [](){return readVoltage() > voltageTurnOnR1;} );    
-  stateMachine.AddTransition(R1_ON, OFF, [](){return readVoltage() < voltageTurnOffR1;} );    
-  stateMachine.AddTransition(R1_ON, R2_ON, [](){return readVoltage() > voltageTurnOnR2;} );    
-  stateMachine.AddTransition(R2_ON, R1_ON, [](){return readVoltage() < voltageTurnOffR2;} );    
+  stateMachine.AddTransition(START, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;} );    
+  stateMachine.AddTransition(OFF, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;} );    
+  stateMachine.AddTransition(R1_ON, OFF, [](){return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR1;} );    
+  stateMachine.AddTransition(R1_ON, R2_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2;} );    
+  stateMachine.AddTransition(R2_ON, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2;} );    
 }
 
 void setup() {
