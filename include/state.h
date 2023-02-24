@@ -1,5 +1,6 @@
 // state.h -- state machine
 
+/*
 int state_all_off(void);
 int state_r1_on(void);
 int state_r2_on(void);
@@ -27,3 +28,4 @@ struct transition state_transitions[] = {
     {r2_on, ok, r2_on},
     {r2_on, voltage_low, r1_on},
     {r2_on, voltage_high, r2_on}};
+*/
