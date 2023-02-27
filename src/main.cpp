@@ -23,8 +23,8 @@ YA_FSM stateMachine;
 // State Alias
 enum State
 {
-    START,
-    OFF,
+    START, // start can switch to R1 immediately
+    OFF, // off (and all other transitions) have a minimum duration time
     R1_ON,
     R2_ON
 };
@@ -147,6 +147,13 @@ void sendVoltage(float voltage)
     btController.send("BAT_VOLTS", String(voltage));
 }
 
+float readAndSendVoltage(const char * stateName)
+{
+    float v = readVoltage(stateName);
+    sendVoltage(v);
+    return v;
+}
+
 void setupStateMachine()
 {
     // Follow the order of defined enumeration for the state definition (will be used as index)
@@ -160,40 +167,21 @@ void setupStateMachine()
     stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
 
     // Add transitions with related trigger input callback functions
-    stateMachine.AddTransition(START, R1_ON, []()
-                                { 
-                                    float v = readVoltage(stateMachine.ActiveStateName());
-                                    sendVoltage(v);
-                                    return v > voltageTurnOnR1; 
-                                });
-
-    stateMachine.AddTransition(OFF, R1_ON, []()
-                                { 
-                                    float v = readVoltage(stateMachine.ActiveStateName());
-                                    sendVoltage(v);
-                                    return v < voltageTurnOffR1; 
-                                });
-                            
-    stateMachine.AddTransition(R1_ON, OFF, []()
-                                { 
-                                    float v = readVoltage(stateMachine.ActiveStateName());
-                                    sendVoltage(v);
-                                    return v < voltageTurnOffR1; 
-                                });
-
-    stateMachine.AddTransition(R1_ON, R2_ON, []()
-                               { 
-                                    float v = readVoltage(stateMachine.ActiveStateName());
-                                    sendVoltage(v);
-                                    return v > voltageTurnOnR2; 
-                                });
-
-    stateMachine.AddTransition(R2_ON, R1_ON, []()
-                               { 
-                                    float v = readVoltage(stateMachine.ActiveStateName());
-                                    sendVoltage(v);
-                                    return v < voltageTurnOffR2; 
-                                });
+    stateMachine.AddTransition(START, R1_ON, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1; 
+    });
+    stateMachine.AddTransition(OFF, R1_ON, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;
+    });
+    stateMachine.AddTransition(R1_ON, OFF, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR1;
+    });
+    stateMachine.AddTransition(R1_ON, R2_ON, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2;
+    });
+    stateMachine.AddTransition(R2_ON, R1_ON, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2;
+    });
 }
 
 /*
