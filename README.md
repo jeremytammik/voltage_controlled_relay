@@ -16,6 +16,36 @@ The [voltage divider calculator](https://ohmslawcalculator.com/voltage-divider-c
 - Vadc = Vbat * Rb/(Ra+Rb)
 - Vbat = Vadc * (Ra+Rb)/Rb
 
+## State Machine
+
+The relay states and transitions are managed by a state machine
+(image generated using [Finite State Machine Designer](https://www.madebyevan.com/fsm/)):
+
+<center>
+<img src="img/2023-02-23_state_machine.png" alt="State machine" title="State machine" width="500"/> <!-- 1004 x 312 pixels -->
+</center>
+
+The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
+Or, to be more precise, the state transition does not happen until the trigger persists for a certain amount of time.
+The trigger itself includes a minimum timespan to cause the state change.
+
+We use [YA_FSM](https://github.com/cotestatnt/YA_FSM) 
+by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta), 
+described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac),
+since it includes functionality to support minimum and maximum timeouts for each state.
+It is also equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762).
+It would be cool to set one up for this project as well.
+That might save a lot of effort implementing real-world tests.
+
+## Board
+
+I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/products/SBC-NodeMCU-ESP32):
+
+<center>
+<img src="img/2023-02-24_joyit_nodemcu_esp32_pins.png" alt="Joy-it NODEMCU ESP32 pins" title="Joy-it NODEMCU ESP32 pins" width="500"/> <!-- 1788 x 1318 pixels -->
+</center>
+
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech)

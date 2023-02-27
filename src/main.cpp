@@ -1,7 +1,11 @@
 #include <Arduino.h>
+#include "YA_FSM.h"
+#include "pins.h"
+#include "readvolt.h"
 #include "util.h"
 #include "timerdelay.h"
 
+<<<<<<< HEAD
 // Load 1
 #define LOAD_1_RELAY 19 // GPIO19
 #define LOAD_1_LED 18   // GPIO18
@@ -48,14 +52,57 @@
 #define CONNECT_SECONDARY_LOADS_VOLTAGE_THRESHOLD 27 // Volts
 
 #define DELAY_B4_SWITCHING 1000 * 60 * 1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
+=======
+void dropLoads();
 
-// Flag to know when he first loop cycle begins so as to set default relay state
-bool appIsStarting = true;
+// Voltage thresholds to turn on and off relay R1 and R2
+float voltageTurnOnR1 = 25.0;
+float voltageTurnOffR1 = 24.0;
+float voltageTurnOnR2 = 27.0;
+float voltageTurnOffR2 = 26.5;
 
-// When voltage is below the set threshold
-long belowThresholdTriggerTimerStart = 0;
-bool voltageIsBelowThreshold = false;
+// Create new FSM
+YA_FSM stateMachine;
 
+// State Alias
+enum State { START, OFF, R1_ON, R2_ON };
+
+// Helper for print labels instead integer when state change
+const char * const stateName[] PROGMEM = { "START", "OFF", "R1_ON", "R2_ON" };
+
+// Minimum time to remain in each state except start
+#define MIN_TIME_MS 1000*60*1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
+
+// Output variables
+bool r1on = false;
+bool r2on = false;
+
+// Define "on entering" state machine callback function
+void onEnter() {
+  Serial.print(stateMachine.ActiveStateName());
+  Serial.println(F(" enter")); 
+}
+
+// Define "on leaving" state machine callback function
+void onExit() {
+  Serial.print(stateMachine.ActiveStateName());
+  Serial.println(F(" leave"));
+}
+>>>>>>> 2af71d8ef3201699bfe33db0feb8327663c307f6
+
+// Setup the State Machine
+void setupStateMachine() {
+  // Follow the order of defined enumeration for the state definition (will be used as index)
+  // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
+  stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
+  stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+  stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+  stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+
+  stateMachine.AddAction(R1_ON, YA_FSM::N, r1on); // N -> while state is active led is ON
+  stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
+
+<<<<<<< HEAD
 // When voltage is above threshold
 long aboveThresholdTriggerTimerStart = 0;
 bool voltageIsAboveThreshold = false;
@@ -177,6 +224,37 @@ void loop()
             aboveThresholdTriggerTimerStart = millis();
         }
     }
+=======
+  // Add transitions with related trigger input callback functions
+  stateMachine.AddTransition(START, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;} );    
+  stateMachine.AddTransition(OFF, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;} );    
+  stateMachine.AddTransition(R1_ON, OFF, [](){return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR1;} );    
+  stateMachine.AddTransition(R1_ON, R2_ON, [](){return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2;} );    
+  stateMachine.AddTransition(R2_ON, R1_ON, [](){return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2;} );    
+}
+
+void setup() {
+  setupPins(); // set up Input/Output
+  Serial.begin(115200);
+  while(!Serial) {}  // Needed for native USB port only
+  Serial.println(F("Starting the Voltage Controlled Switch...\n"));
+  setupStateMachine();
+  dropLoads(); // turn off all loads
+}
+
+void loop() {
+  // Update State Machine
+  if(stateMachine.Update()){
+    Serial.print(F("Active state: "));
+    Serial.println(stateMachine.ActiveStateName());
+  }
+
+  // Set outputs
+  digitalWrite(LOAD_1_LED, r1on);
+  digitalWrite(LOAD_1_RELAY, r1on);
+  digitalWrite(LOAD_2_LED, r2on);
+  digitalWrite(LOAD_2_RELAY, r2on);
+>>>>>>> 2af71d8ef3201699bfe33db0feb8327663c307f6
 
     // delay(500); // Sleep for half a second
 }
@@ -191,6 +269,7 @@ void setOff(int pin)
     digitalWrite(pin, LOW);
 }
 
+<<<<<<< HEAD
 float readVoltage()
 {
     int i, adc=0;
@@ -259,10 +338,32 @@ void dropLoads(bool ok)
         setOn(LOAD_6_RELAY);
         setOn(LOAD_6_LED);
     }
+=======
+// Turn off the loads
+void dropLoads() {
+  setOff(LOAD_1_RELAY);
+  setOff(LOAD_1_LED);
+
+  setOff(LOAD_2_RELAY);
+  setOff(LOAD_2_LED);
+
+  setOff(LOAD_3_RELAY);
+  setOff(LOAD_3_LED);
+
+  setOff(LOAD_4_RELAY);
+  setOff(LOAD_4_LED);
+
+  setOff(LOAD_5_RELAY);
+  setOff(LOAD_5_LED);
+
+  setOff(LOAD_6_RELAY);
+  setOff(LOAD_6_LED);
+>>>>>>> 2af71d8ef3201699bfe33db0feb8327663c307f6
 }
 
 /*
 // State machine
+// https://stackoverflow.com/questions/1371460/state-machines-tutorials
 
 int entry_state(void);
 int foo_state(void);
@@ -309,4 +410,101 @@ int main(int argc, char *argv[]) {
 
     return EXIT_SUCCESS;
 }
+
+// https://www.norwegiancreations.com/2017/03/state-machines-and-arduino-implementation/
+
+enum State_enum {STOP, FORWARD, ROTATE_RIGHT, ROTATE_LEFT};
+enum Sensors_enum {NONE, SENSOR_RIGHT, SENSOR_LEFT, BOTH};
+ 
+void state_machine_run(uint8_t sensors);
+void motors_stop();
+void motors_forward();
+void motors_right();
+void motors_left();
+uint8_t read_IR();
+ 
+uint8_t state = STOP;
+ 
+void setup(){
+}
+ 
+void loop(){
+  state_machine_run(read_IR());
+ 
+  delay(10);
+}
+ 
+void state_machine_run(uint8_t sensors) 
+{
+  switch(state)
+  {
+    case STOP:
+      if(sensors == NONE){
+        motors_forward();
+        state = FORWARD;
+      }
+      else if(sensors == SENSOR_RIGHT){
+        motors_left();
+        state = ROTATE_LEFT;
+      }
+      else{
+        motors_right();
+        state = ROTATE_RIGHT;
+      }
+      break;
+       
+    case FORWARD:
+      if(sensors != NONE){
+        motors_stop();
+        state = STOP;
+      }
+      break;
+ 
+    case ROTATE_RIGHT:
+      if(sensors == NONE || sensors == SENSOR_RIGHT){
+        motors_stop();
+        state = STOP;
+      }
+      break;
+ 
+    case ROTATE_LEFT:
+      if(sensors != SENSOR_RIGHT)
+      {
+        motors_stop();
+        state = STOP; 
+      }
+      break;
+  }
+}
+ 
+void motors_stop()
+{
+  //code for stopping motors
+}
+ 
+void motors_forward()
+{
+  //code for driving forward  
+}
+ 
+void motors_right()
+{
+  //code for turning right
+}
+ 
+void motors_left()
+{
+  //code for turning left
+}
+ 
+uint8_t read_IR()
+{
+  //code for reading both sensors
+}
+
+// https://github.com/bask185/ArduinoToolchain
+
+// https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac
+// https://github.com/cotestatnt/YA_FSM
+
 */
