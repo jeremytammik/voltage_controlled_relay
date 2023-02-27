@@ -4,6 +4,10 @@
 #include "readvolt.h"
 #include "util.h"
 #include "timerdelay.h"
+#include "btcontroller.h"
+
+TimerDelay btSendDelay(false, 2000);
+BluetoothController btController;
 
 void dropLoads();
 
@@ -36,44 +40,15 @@ bool r1on = false;
 bool r2on = false;
 
 // Define "on entering" state machine callback function
-void onEnter()
-{
-    Serial.print(stateMachine.ActiveStateName());
-    Serial.println(F(" enter"));
-}
+void onEnter();
 
 // Define "on leaving" state machine callback function
-void onExit()
-{
-    Serial.print(stateMachine.ActiveStateName());
-    Serial.println(F(" leave"));
-}
+void onExit();
 
 // Setup the State Machine
-void setupStateMachine()
-{
-    // Follow the order of defined enumeration for the state definition (will be used as index)
-    // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
-    stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+void setupStateMachine();
 
-    stateMachine.AddAction(R1_ON, YA_FSM::N, r1on); // N -> while state is active led is ON
-    stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
-
-    // Add transitions with related trigger input callback functions
-    stateMachine.AddTransition(START, R1_ON, []()
-                               { return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1; });
-    stateMachine.AddTransition(OFF, R1_ON, []()
-                               { return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1; });
-    stateMachine.AddTransition(R1_ON, OFF, []()
-                               { return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR1; });
-    stateMachine.AddTransition(R1_ON, R2_ON, []()
-                               { return readVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2; });
-    stateMachine.AddTransition(R2_ON, R1_ON, []()
-                               { return readVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2; });
-}
+void sendVoltage(float voltage);
 
 void setup()
 {
@@ -82,9 +57,16 @@ void setup()
     while (!Serial)
     {
     } // Needed for native USB port only
+
     Serial.println(F("Starting the Voltage Controlled Switch...\n"));
     setupStateMachine();
     dropLoads(); // turn off all loads
+
+    // Initialize bluetooth and its delay timer
+    btController.init();
+    btSendDelay.start();
+
+    btController.sendInfo("Initializing the application ...");
 }
 
 void loop()
@@ -102,7 +84,18 @@ void loop()
     digitalWrite(LOAD_2_LED, r2on);
     digitalWrite(LOAD_2_RELAY, r2on);
 
-    delay(500); // Sleep for half a second
+    // Sync the bluetooth controller
+    BluetoothData btData = btController.sync();
+    if(btData.available()) {
+        // Handle the data sent over bluetooth here
+        Serial.print("CMD -> '");
+        Serial.print(btData.getCommand());
+        Serial.print("\tData -> '");
+        Serial.print(btData.getData());
+        Serial.println("'");
+    }
+
+    delay(1000); // Sleep for a second
 }
 
 void setOn(int pin)
@@ -135,6 +128,72 @@ void dropLoads()
 
     setOff(LOAD_6_RELAY);
     setOff(LOAD_6_LED);
+}
+
+void onEnter()
+{
+    Serial.print(stateMachine.ActiveStateName());
+    Serial.println(F(" enter"));
+}
+
+void onExit()
+{
+    Serial.print(stateMachine.ActiveStateName());
+    Serial.println(F(" leave"));
+}
+
+void sendVoltage(float voltage)
+{
+    btController.send("BAT_VOLTS", String(voltage));
+}
+
+void setupStateMachine()
+{
+    // Follow the order of defined enumeration for the state definition (will be used as index)
+    // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
+    stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
+    stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+    stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+    stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+
+    stateMachine.AddAction(R1_ON, YA_FSM::N, r1on); // N -> while state is active led is ON
+    stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
+
+    // Add transitions with related trigger input callback functions
+    stateMachine.AddTransition(START, R1_ON, []()
+                                { 
+                                    float v = readVoltage(stateMachine.ActiveStateName());
+                                    sendVoltage(v);
+                                    return v > voltageTurnOnR1; 
+                                });
+
+    stateMachine.AddTransition(OFF, R1_ON, []()
+                                { 
+                                    float v = readVoltage(stateMachine.ActiveStateName());
+                                    sendVoltage(v);
+                                    return v < voltageTurnOffR1; 
+                                });
+                            
+    stateMachine.AddTransition(R1_ON, OFF, []()
+                                { 
+                                    float v = readVoltage(stateMachine.ActiveStateName());
+                                    sendVoltage(v);
+                                    return v < voltageTurnOffR1; 
+                                });
+
+    stateMachine.AddTransition(R1_ON, R2_ON, []()
+                               { 
+                                    float v = readVoltage(stateMachine.ActiveStateName());
+                                    sendVoltage(v);
+                                    return v > voltageTurnOnR2; 
+                                });
+
+    stateMachine.AddTransition(R2_ON, R1_ON, []()
+                               { 
+                                    float v = readVoltage(stateMachine.ActiveStateName());
+                                    sendVoltage(v);
+                                    return v < voltageTurnOffR2; 
+                                });
 }
 
 /*

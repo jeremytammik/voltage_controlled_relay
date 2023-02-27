@@ -5,6 +5,7 @@
 */
 #ifndef YA_FSM_H
 #define YA_FSM_H
+
 #include "Arduino.h"
 
 // typedef bool(*condition_cb)();
