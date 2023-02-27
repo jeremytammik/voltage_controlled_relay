@@ -15,7 +15,7 @@ BluetoothData::BluetoothData(String cmd, String data) : m_command(cmd), m_data(d
 
 bool BluetoothData::available()
 {
-    m_hasData;
+    return m_hasData;
 }
 
 String BluetoothData::getCommand()
@@ -55,6 +55,7 @@ bool BluetoothController::init()
 {
     m_serialBT.begin("Voltage Controlled Relay"); // Bluetooth device name
     Serial.println("Bluetooth UP & RUNNING");
+    return true;
 }
 
 BluetoothData BluetoothController::sync()
