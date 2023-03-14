@@ -13,7 +13,7 @@ void dropLoads();
 
 // Voltage thresholds to turn on and off relay R1 and R2
 float voltageTurnOnR1 = 25.0;
-float voltageTurnOffR1 = 24.0;
+float voltageTurnOffAll = 24.5;
 float voltageTurnOnR2 = 27.0;
 float voltageTurnOffR2 = 26.5;
 
@@ -26,18 +26,18 @@ enum State
     START, // start can switch to R1 immediately
     OFF, // off (and all other transitions) have a minimum duration time
     R1_ON,
-    R2_ON
+    R1_AND_R2_ON
 };
 
 // Helper for print labels instead integer when state change
-const char *const stateName[] PROGMEM = {"START", "OFF", "R1_ON", "R2_ON"};
+const char *const stateName[] PROGMEM = {"START", "OFF", "R1_ON", "R1_AND_R2_ON"};
 
 // Minimum time to remain in each state except start
 #define MIN_TIME_MS 1000 * 60 * 1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
 
 // Output variables
-bool r1on = false;
-bool r2on = false;
+bool r1_on = false;
+bool r1_and_r2_on = false;
 
 // Define "on entering" state machine callback function
 void onEnter();
@@ -54,8 +54,7 @@ void setup()
 {
     setupPins(); // set up Input/Output
     Serial.begin(115200);
-    while (!Serial)
-    {
+    while (!Serial) {
     } // Needed for native USB port only
 
     Serial.println(F("Starting the Voltage Controlled Switch...\n"));
@@ -79,10 +78,10 @@ void loop()
     }
 
     // Set outputs
-    digitalWrite(LOAD_1_LED, r1on);
-    digitalWrite(LOAD_1_RELAY, r1on);
-    digitalWrite(LOAD_2_LED, r2on);
-    digitalWrite(LOAD_2_RELAY, r2on);
+    digitalWrite(LOAD_1_LED, r1_on || r1_and_r2_on);
+    digitalWrite(LOAD_1_RELAY, r1_on || r1_and_r2_on);
+    digitalWrite(LOAD_2_LED, r1_and_r2_on);
+    digitalWrite(LOAD_2_RELAY, r1_and_r2_on);
 
     // Sync the bluetooth controller
     BluetoothData btData = btController.sync();
@@ -162,10 +161,10 @@ void setupStateMachine()
     stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
     stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
     stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
+    stateMachine.AddState(stateName[R1_AND_R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
 
-    stateMachine.AddAction(R1_ON, YA_FSM::N, r1on); // N -> while state is active led is ON
-    stateMachine.AddAction(R2_ON, YA_FSM::N, r2on);
+    stateMachine.AddAction(R1_ON, YA_FSM::N, r1_on); // N -> while state is active led is ON
+    stateMachine.AddAction(R1_AND_R2_ON, YA_FSM::N, r1_and_r2_on);
 
     // Add transitions with related trigger input callback functions
     stateMachine.AddTransition(START, R1_ON, []() { 
@@ -175,63 +174,15 @@ void setupStateMachine()
         return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;
     });
     stateMachine.AddTransition(R1_ON, OFF, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR1;
+        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffAll;
     });
-    stateMachine.AddTransition(R1_ON, R2_ON, []() { 
+    stateMachine.AddTransition(R1_ON, R1_AND_R2_ON, []() { 
         return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2;
     });
-    stateMachine.AddTransition(R2_ON, R1_ON, []() { 
+    stateMachine.AddTransition(R1_AND_R2_ON, OFF, []() { 
+        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffAll;
+    });
+    stateMachine.AddTransition(R1_AND_R2_ON, R1_ON, []() { 
         return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2;
     });
 }
-
-/*
-// State machine
-// https://stackoverflow.com/questions/1371460/state-machines-tutorials
-
-int entry_state(void);
-int foo_state(void);
-int bar_state(void);
-int exit_state(void);
-
-// array and enum below must be in sync!
-int (* state[])(void) = { entry_state, foo_state, bar_state, exit_state};
-enum state_codes { entry, foo, bar, end};
-
-enum ret_codes { ok, fail, repeat};
-struct transition {
-    enum state_codes src_state;
-    enum ret_codes   ret_code;
-    enum state_codes dst_state;
-};
-
-// transitions from end state aren't needed
-struct transition state_transitions[] = {
-    {entry, ok,     foo},
-    {entry, fail,   end},
-    {foo,   ok,     bar},
-    {foo,   fail,   end},
-    {foo,   repeat, foo},
-    {bar,   ok,     end},
-    {bar,   fail,   end},
-    {bar,   repeat, foo}};
-
-#define EXIT_STATE end
-#define ENTRY_STATE entry
-
-int main(int argc, char *argv[]) {
-    enum state_codes cur_state = ENTRY_STATE;
-    enum ret_codes rc;
-    int (* state_fun)(void);
-
-    for (;;) {
-        state_fun = state[cur_state];
-        rc = state_fun();
-        if (EXIT_STATE == cur_state)
-            break;
-        cur_state = lookup_transitions(cur_state, rc);
-    }
-
-    return EXIT_SUCCESS;
-}
-*/
