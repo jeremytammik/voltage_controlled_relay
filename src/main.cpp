@@ -86,8 +86,9 @@ void loop()
 
     // Sync the bluetooth controller
     BluetoothData btData = btController.sync();
+
     if(btData.available()) {
-        // Handle the data sent over bluetooth here
+        // Handle data sent over bluetooth
         Serial.print("CMD -> '");
         Serial.print(btData.getCommand());
         Serial.print("\tData -> '");
@@ -95,7 +96,7 @@ void loop()
         Serial.println("'");
     }
 
-    delay(1000); // Sleep for a second
+    delay(500); // Sleep
 }
 
 void setOn(int pin)
