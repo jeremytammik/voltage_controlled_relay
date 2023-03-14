@@ -17,14 +17,23 @@
 #define RA 81200
 #define RB 10000
 
+// Ra = 82k, Rb = 10k
+// 3.3/4096 * (82+12)/12
+// 3.3*(ra+rb)/rb = 30.36
+// (3.3/4096)*(ra+rb)/rb = 0.007412109375
+// tweak this value to match the real voltage:
+
+#define ADC2BAT 0.007412109375
+
 float readVoltage( const char * state ) {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
-  float adc_volt = (adc_raw * 3.3) / (4095);
-  float battery_volt = adc_volt * ((RA+RB)/RB);
+  //float adc_volt = (adc_raw * 3.3) / (4095);
+  //float battery_volt = adc_volt * ((RA+RB)/RB);
+  double battery_volt = adc_raw * ADC2BAT;
 
   Serialprintln(
-    "readVoltage %s ADC raw %d = %fV ~ %fV battery",
-    state, adc_raw, adc_volt, battery_volt);
+    "readVoltage %s ADC raw %d ~ %fV battery",
+    state, adc_raw, battery_volt);
 
   return battery_volt;
 }
