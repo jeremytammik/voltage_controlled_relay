@@ -16,6 +16,12 @@ The [voltage divider calculator](https://ohmslawcalculator.com/voltage-divider-c
 - Vadc = Vbat * Rb/(Ra+Rb)
 - Vbat = Vadc * (Ra+Rb)/Rb
 
+The first test showed a significant inaccuracy.
+Probably a better approach is to pick two resistors for the voltage divider
+that more or less fall into the correct range and then tweak the software
+calculation values until the voltage reported by the Arduino mathes the
+real voltage applied externally.
+
 ## State Machine
 
 The relay states and transitions are managed by a state machine
