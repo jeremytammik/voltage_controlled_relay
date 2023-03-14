@@ -21,9 +21,8 @@ A better approach might be to pick two resistors for the voltage divider
 that more or less fall into the correct range and then tweak the software
 calculation values until the voltage reported by the Arduino matches the
 real voltage applied externally.
-
 With Ra = 82k and Rb = 10k, a constant `a2b` of ca. 0.00742 can be used to
-map the ADC range [0,4095] to ca. [0V,30.4V].
+map the ADC range [0,4095] to the battery voltage range of ca. [0V,30.4V].
 
 ## State Machine
 
