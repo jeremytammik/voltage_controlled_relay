@@ -53,6 +53,13 @@ I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/product
 <img src="img/2023-02-24_joyit_nodemcu_esp32_pins.png" alt="Joy-it NODEMCU ESP32 pins" title="Joy-it NODEMCU ESP32 pins" width="500"/> <!-- 1788 x 1318 pixels -->
 </center>
 
+## Schematic
+
+Here is the current state of the schematic:
+
+<center>
+<img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
+</center>
 
 ## Authors
 
