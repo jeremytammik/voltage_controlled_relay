@@ -23,8 +23,8 @@ Much simpler state management with no timer setting, just switch immediately on 
     - Ub > 25.5V &rarr; R1_ON
 - R1_ON:
     - Ub < 24.9V &rarr; OFF
-    - Ub > 27V &rarr; R2_ON
-- R2_ON:
+    - Ub > 27V &rarr; R1_AND_R2_ON
+- R1_AND_R2_ON:
     - Ub < 24.9V &rarr; OFF
     - Ub < 26.5V &rarr; R1_ON
 
