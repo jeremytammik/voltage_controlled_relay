@@ -16,7 +16,11 @@ float voltageTurnOffAll = 24.9;
 float voltageTurnOnR2 = 27.0;
 float voltageTurnOffR2 = 26.5;
 
-// State Alias
+// Output variables
+bool r1_on = false;
+bool r1_and_r2_on = false;
+
+// States
 enum State
 {
     OFF, // == Start
@@ -25,11 +29,18 @@ enum State
 };
 
 // Helper for print labels instead integer when state change
-const char *const stateName[] PROGMEM = {"OFF", "R1_ON", "R1_AND_R2_ON"};
+const char * const stateName[] PROGMEM = {"OFF", "R1_ON", "R1_AND_R2_ON"};
 
-// Output variables
-bool r1_on = false;
-bool r1_and_r2_on = false;
+// Current state
+//State current_state = OFF;
+
+// The three states are tracked and maintained using the two output variables
+State current_state()
+{
+    if(r1_and_r2_on) { return R1_AND_R2_ON; }
+    else if(r1_on) { return R1_ON; }
+    else return OFF;
+}
 
 void sendVoltage(float voltage);
 
@@ -41,24 +52,39 @@ void setup()
     } // Needed for native USB port only
 
     Serial.println(F("Starting the Voltage Controlled Switch...\n"));
-    setupStateMachine();
     dropLoads(); // turn off all loads
 
     // Initialize bluetooth and its delay timer
     btController.init();
     btSendDelay.start();
-
-    btController.sendInfo("Initializing the application ...");
+    btController.sendInfo("Initializing voltage_controlled_relay...");
 }
 
 void loop()
 {
-    // Update State Machine
-    if (stateMachine.Update())
+    State old_state = current_state();
+    float v = readVoltage();
+
+    btController.send("BAT_VOLTS", String(v));
+
+    if( OFF == old_state)
     {
-        Serial.print(F("Active state: "));
-        Serial.println(stateMachine.ActiveStateName());
+        if( voltageTurnOnR2 < v ) { r1_and_r2_on = true; }
+        else if( voltageTurnOnR1 < v ) { r1_on = true; }
     }
+    else if( R1_ON == old_state)
+    {
+        if( voltageTurnOffAll > v ) { r1_on = r1_and_r2_on = false; }
+        else if( voltageTurnOnR2 < v ) { r1_and_r2_on = true; }
+    }
+    else if( R1_AND_R2_ON == old_state)
+    {
+        if( voltageTurnOffAll > v ) { r1_on = r1_and_r2_on = false; }
+        else if( voltageTurnOffR2 > v ) { r1_and_r2_on = false; }
+    }
+
+    Serialprintln( "Voltage %fV - state %s --> %s",
+      v, stateName[old_state], stateName[current_state()]);
 
     // Set outputs
     digitalWrite(LOAD_1_LED, r1_on || r1_and_r2_on);
@@ -113,59 +139,3 @@ void dropLoads()
     setOff(LOAD_6_LED);
 }
 
-void onEnter()
-{
-    Serial.print(stateMachine.ActiveStateName());
-    Serial.println(F(" enter"));
-}
-
-void onExit()
-{
-    Serial.print(stateMachine.ActiveStateName());
-    Serial.println(F(" leave"));
-}
-
-void sendVoltage(float voltage)
-{
-    btController.send("BAT_VOLTS", String(voltage));
-}
-
-float readAndSendVoltage(const char * stateName)
-{
-    float v = readVoltage(stateName);
-    sendVoltage(v);
-    return v;
-}
-
-void setupStateMachine()
-{
-    // Follow the order of defined enumeration for the state definition (will be used as index)
-    // Add States => name, timeout, onEnter cb, onState cb, onLeave cb
-    stateMachine.AddState(stateName[START], 0, 0, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[OFF], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[R1_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-    stateMachine.AddState(stateName[R1_AND_R2_ON], 0, MIN_TIME_MS, onEnter, nullptr, onExit);
-
-    stateMachine.AddAction(R1_ON, YA_FSM::N, r1_on); // N -> while state is active led is ON
-    stateMachine.AddAction(R1_AND_R2_ON, YA_FSM::N, r1_and_r2_on);
-
-    // Add transitions with related trigger input callback functions
-    stateMachine.AddTransition(START, R1_ON, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1; 
-    });
-    stateMachine.AddTransition(OFF, R1_ON, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR1;
-    });
-    stateMachine.AddTransition(R1_ON, OFF, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffAll;
-    });
-    stateMachine.AddTransition(R1_ON, R1_AND_R2_ON, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) > voltageTurnOnR2;
-    });
-    stateMachine.AddTransition(R1_AND_R2_ON, OFF, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffAll;
-    });
-    stateMachine.AddTransition(R1_AND_R2_ON, R1_ON, []() { 
-        return readAndSendVoltage(stateMachine.ActiveStateName()) < voltageTurnOffR2;
-    });
-}

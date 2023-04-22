@@ -25,15 +25,15 @@
 
 #define ADC2BAT 0.007412109375
 
-float readVoltage( const char * state ) {
+float readVoltage() {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
   //float adc_volt = (adc_raw * 3.3) / (4095);
   //float battery_volt = adc_volt * ((RA+RB)/RB);
   double battery_volt = adc_raw * ADC2BAT;
 
   Serialprintln(
-    "readVoltage %s ADC raw %d ~ %fV battery",
-    state, adc_raw, battery_volt);
+    "readVoltage ADC raw %d ~ %fV battery",
+    adc_raw, battery_volt);
 
   return battery_volt;
 }

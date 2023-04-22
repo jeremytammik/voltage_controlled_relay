@@ -41,8 +41,6 @@ private:
     bool m_hasData = false;
 };
 
-
-
 class BluetoothController
 {
 public:

@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include "pins.h"
 
-void setupPins() {
+void setupPins() 
+{
   // Load 1
   pinMode(LOAD_1_RELAY, OUTPUT);
   pinMode(LOAD_1_LED, OUTPUT);

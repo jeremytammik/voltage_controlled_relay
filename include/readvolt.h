@@ -3,6 +3,6 @@
 
 // readvolt.h -- read voltage
 
-float readVoltage( const char * state );
+float readVoltage();
 
 #endif // READVOLT_H
