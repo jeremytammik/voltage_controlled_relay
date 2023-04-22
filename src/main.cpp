@@ -138,4 +138,3 @@ void dropLoads()
     setOff(LOAD_6_RELAY);
     setOff(LOAD_6_LED);
 }
-
