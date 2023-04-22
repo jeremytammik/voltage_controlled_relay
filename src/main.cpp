@@ -16,36 +16,20 @@ float voltageTurnOffAll = 24.9;
 float voltageTurnOnR2 = 27.0;
 float voltageTurnOffR2 = 26.5;
 
-// Create new FSM
-YA_FSM stateMachine;
-
 // State Alias
 enum State
 {
-    START, // start can switch to R1 immediately
-    OFF, // off (and all other transitions) have a minimum duration time
+    OFF, // == Start
     R1_ON,
     R1_AND_R2_ON
 };
 
 // Helper for print labels instead integer when state change
-const char *const stateName[] PROGMEM = {"START", "OFF", "R1_ON", "R1_AND_R2_ON"};
-
-// Minimum time to remain in each state except start
-#define MIN_TIME_MS 1000 * 60 * 1 // 1 minute (milliseconds * seconds * minutes) -> milliseconds
+const char *const stateName[] PROGMEM = {"OFF", "R1_ON", "R1_AND_R2_ON"};
 
 // Output variables
 bool r1_on = false;
 bool r1_and_r2_on = false;
-
-// Define "on entering" state machine callback function
-void onEnter();
-
-// Define "on leaving" state machine callback function
-void onExit();
-
-// Setup the State Machine
-void setupStateMachine();
 
 void sendVoltage(float voltage);
 
