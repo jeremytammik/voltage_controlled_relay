@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include "YA_FSM.h"
 #include "pins.h"
 #include "readvolt.h"
 #include "util.h"
@@ -12,8 +11,8 @@ BluetoothController btController;
 void dropLoads();
 
 // Voltage thresholds to turn on and off relay R1 and R2
-float voltageTurnOnR1 = 25.0;
-float voltageTurnOffAll = 24.5;
+float voltageTurnOnR1 = 25.5;
+float voltageTurnOffAll = 24.9;
 float voltageTurnOnR2 = 27.0;
 float voltageTurnOffR2 = 26.5;
 

@@ -20,13 +20,13 @@ I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/product
 Much simpler state management with no timer setting, just switch immediately on crossing various thresholds for the battery voltage Ub:
 
 - Start == OFF:
-    - Ub > 25.9V &rarr; R1_ON
+    - Ub > 25.5V &rarr; R1_ON
 - R1_ON:
     - Ub < 24.9V &rarr; OFF
     - Ub > 27V &rarr; R2_ON
 - R2_ON:
     - Ub < 24.9V &rarr; OFF
-    - Ub < 26.3V &rarr; R1_ON
+    - Ub < 26.5V &rarr; R1_ON
 
 ## First Approach
 
