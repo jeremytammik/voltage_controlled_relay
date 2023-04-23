@@ -1,11 +1,10 @@
 # Voltage Controlled Relay
 
 - [Board](#board)
-- [Plan B](#plan-b)
-- [First approach](#first-approach)
-    - [Voltage divider](#voltage-divider)
-    - [State machine](#state-machine)
-    - [Schematic](#schematic)
+- [Schematic](#schematic)
+- [Voltage divider](#voltage-divider)
+- [State machine](#state-machine)
+- [Second approach](#second-approach)
 
 ## Board
 
@@ -15,25 +14,15 @@ I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/product
 <img src="img/2023-02-24_joyit_nodemcu_esp32_pins.png" alt="Joy-it NODEMCU ESP32 pins" title="Joy-it NODEMCU ESP32 pins" width="500"/> <!-- 1788 x 1318 pixels -->
 </center>
 
-## Plan B
+## Schematic
 
-Rewrote the whole thing using a much simpler state machine management with no timer settings.
-Just switch states immediately on crossing the following thresholds for the battery voltage Ub:
+Here is the schematic for the voltage divider to measure the 24V battery voltage, the relays, and the LEDs showing their state:
 
-- Start == OFF:
-    - Ub > 25.5V &rarr; R1_ON
-- R1_ON:
-    - Ub < 24.9V &rarr; OFF
-    - Ub > 27V &rarr; R1_AND_R2_ON
-- R1_AND_R2_ON:
-    - Ub < 24.9V &rarr; OFF
-    - Ub < 26.5V &rarr; R1_ON
+<center>
+<img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
+</center>
 
-## First Approach
-
-First approach with Allan using the YA_FSM library:
-
-### Voltage Divider
+## Voltage Divider
 
 We need to convert the input battery voltage range [24V,30V] to fit into the ESP32 ADC input voltage range [0V,3.3V],
 cf. [ESP32 ADC tutorial &ndash; read analog voltage in Arduino](https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/).
@@ -59,7 +48,7 @@ map the ADC `int` range [0,4095] to the battery voltage range of ca. [0V,30.4V].
 
 ### State Machine
 
-The relay states and transitions are managed by a state machine
+In the first approach, we used the YA_FSM library to implement a state machine to manage the relay states and transitions
 (image generated using [Finite State Machine Designer](https://www.madebyevan.com/fsm/)):
 
 <center>
@@ -70,7 +59,7 @@ The transitions are complicated by the fact that each state, once attained, must
 Or, to be more precise, the state transition does not happen until the trigger persists for a certain amount of time.
 The trigger itself includes a minimum timespan to cause the state change.
 
-We use [YA_FSM](https://github.com/cotestatnt/YA_FSM)
+We used [YA_FSM](https://github.com/cotestatnt/YA_FSM)
 by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta),
 described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac),
 since it includes functionality to support minimum and maximum timeouts for each state.
@@ -78,13 +67,35 @@ It is also equipped with a [wokwi simulation](https://wokwi.com/projects/3382484
 It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
-### Schematic
+## Second approach
 
-Here is the current state of the schematic:
+Rewrote the switch using a very simple state machine implemented manually with no librasry and no timer settings.
+Just switch states immediately on crossing the following thresholds for the battery voltage Ub:
+
+- Start == OFF:
+    - Ub > 25.5V &rarr; R1_ON
+- R1_ON:
+    - Ub < 24.9V &rarr; OFF
+    - Ub > 27V &rarr; R1_AND_R2_ON
+- R1_AND_R2_ON:
+    - Ub < 24.9V &rarr; OFF
+    - Ub < 26.5V &rarr; R1_ON
+
+I simplified the code by implementing the state machine in a more minimal fashion and eliminating all timing considerations.
+Check out simplified algorithm in [main.cpp](src/main.cpp).
+I built and successfully tested the new approach that according to the schematic above with two relays connected, which is all I will need in real life:
 
 <center>
-<img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
+<img src="img/2023-02-2023-04-22_plan_b_2_relay.jpg" alt="Second approach" title="Second approach" width="500"/> <!-- 1004 x 312 pixels -->
 </center>
+
+It works perfectly, afaict, except that the voltage measurement is extremely unprecise.
+In the lower region, under 25V, the ADC conversion reports a too low voltage, and in the high region it is too high.
+Also, I am afraid of breaking the ADC by inadvertently applying a too high input voltage, since I am just twiddling a knob by hand to control it.
+
+I'll see whether I can fine-tune it better somehow.
+For instance, I could implement a custom mapping of the ADC ranges to the corresponding real-world voltage aapplied.
+I think I would like to install this soon for real-world testing and use.
 
 ## Authors
 
