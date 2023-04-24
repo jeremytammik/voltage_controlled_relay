@@ -90,7 +90,7 @@ Check out simplified algorithm in [main.cpp](src/main.cpp).
 I built and successfully tested the new approach that according to the schematic above with two relays connected, which is all I will need in real life:
 
 <center>
-<img src="img/2023-02-2023-04-22_plan_b_2_relay.jpg" alt="Second approach" title="Second approach" width="500"/> <!-- 1004 x 312 pixels -->
+<img src="img/2023-04-22_plan_b_2_relay.jpg" alt="Second approach" title="Second approach" width="500"/> <!-- 1004 x 312 pixels -->
 </center>
 
 It works perfectly, afaict, except that the voltage measurement is extremely unprecise.
