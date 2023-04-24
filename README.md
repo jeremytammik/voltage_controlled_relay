@@ -1,5 +1,9 @@
 # Voltage Controlled Relay
 
+The voltage controlled relay controls a bank of relays based on the voltage of a PV battery.
+The input is the battery voltage in the range [24V,30V].
+This is measured via a voltage divider to turn relays on and off when various thresholds are crossed:
+
 - [Board](#board)
 - [Schematic](#schematic)
 - [Voltage divider](#voltage-divider)
@@ -16,7 +20,7 @@ I am working with the [Joy-it NODEMCU ESP32 board](https://joy-it.net/en/product
 
 ## Schematic
 
-Here is the schematic for the voltage divider to measure the 24V battery voltage, the relays, and the LEDs showing their state:
+Here is the schematic to hook up the voltage divider measuring the 24V battery input voltage and control the relays and the LEDs showing their state:
 
 <center>
 <img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
