@@ -9,6 +9,7 @@ This is measured via a voltage divider to turn relays on and off when various th
 - [Voltage divider](#voltage-divider)
 - [State machine](#state-machine)
 - [Second approach](#second-approach)
+- [Third approach with heat pump](#third-approach-with-heat-pump)
 
 ## Board
 
@@ -101,7 +102,7 @@ I'll see whether I can fine-tune it better somehow.
 For instance, I could implement a custom mapping of the ADC ranges to the corresponding real-world voltage aapplied.
 I think I would like to install this soon for real-world testing and use.
 
-## Third approach
+## Third Approach with Heat Pump
 
 The [hot water heat pump](https://waldrain.github.io/moniwonig#wwwp) is up and running.
 It needs to run at least three hours and consume 1.5 kWh per day.
