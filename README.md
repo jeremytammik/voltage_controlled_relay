@@ -108,7 +108,7 @@ The [hot water heat pump](https://waldrain.github.io/moniwonig#wwwp) is up and r
 It needs to run at least three hours and consume 1.5 kWh per day.
 It also needs to run uninterrupted for as long as possible, at least an hour at a time, preferably two or three in a go.
 Also, to ensure enough hot water is available if the sun does not shine enough during one day,
-it needs to run on grid main power after sunset to fulfil the daily requirement.
+it needs to run on grid mains power after sunset to fulfil the daily requirement.
 Since the PV system and the grid mains use separate electrical residual current circuit breakers, FI-Schutzschalter,
 both the phase and the neutral lines need to be switched when switching between PV and grid mains, requiring two separate relays.
 The two relays can both be controlled by one single pin, though.
@@ -116,7 +116,7 @@ So, we have the following relays to switch:
 
 - R1 &ndash; general PV power
 - R2n + R2p &ndash; PV power for the heat pump
-- R3n + R3p &ndash; mains grid power for the heat pump
+- R3n + R3p &ndash; grid mains power for the heat pump
 
 The three relays have four states:
 
