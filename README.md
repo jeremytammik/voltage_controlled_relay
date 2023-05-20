@@ -93,13 +93,51 @@ I built and successfully tested the new approach that according to the schematic
 <img src="img/2023-04-22_plan_b_2_relay.jpg" alt="Second approach" title="Second approach" width="500"/> <!-- 1004 x 312 pixels -->
 </center>
 
-It works perfectly, afaict, except that the voltage measurement is extremely unprecise.
+It works perfectly, afaict, except that the voltage measurement is imprecise.
 In the lower region, under 25V, the ADC conversion reports a too low voltage, and in the high region it is too high.
 Also, I am afraid of breaking the ADC by inadvertently applying a too high input voltage, since I am just twiddling a knob by hand to control it.
 
 I'll see whether I can fine-tune it better somehow.
 For instance, I could implement a custom mapping of the ADC ranges to the corresponding real-world voltage aapplied.
 I think I would like to install this soon for real-world testing and use.
+
+## Third approach
+
+The [hot water heat pump](https://waldrain.github.io/moniwonig#wwwp) is up and running.
+It needs to run at least three hours and consume 1.5 kWh per day.
+It also needs to run uninterrupted for as long as possible, at least an hour at a time, preferably two or three in a go.
+Also, to ensure enough hpot water is available if the sun does not shine enough during one day,
+it needs to run on grid main power after sunset to fulfil the daily requirement.
+Since the PV system and the grid mains use separate electrical residual current circuit breakers, FI-Schutzschalter,
+both the phase and the neutral lines need to be switched when switching between PV and grid mains, requiring two separate relays.
+The two relays can both be controlled by one single pin, though.
+So, we have the following relays to switch:
+
+- R1 &ndash; general PV power
+- R2n + R2p &ndash; PV power for the heat pump
+- R3n + R3p &ndash; mains grid power for the heat pump
+
+The three relays have four states:
+
+- OFF
+- R1_ON
+- R1_AND_R2_ON
+- R3_ON
+
+The relays and the heat pump time counter T can be controlled using the following state machine that needs to be restarted every day:
+
+- Start == OFF:
+    - T = 0
+    - Ub > 25.5V &rarr; R1_ON
+- R1_ON:
+    - Ub < 24.9V &rarr; OFF
+    - Ub > 26.8V &rarr; R1_AND_R2_ON, Tstart = current_time
+- R1_AND_R2_ON:
+    - Ub < 24.9V &rarr; OFF, T += current_time - Tstart
+    - Ub < 26.5V &rarr; R1_ON, T += current_time - Tstart
+- current_time > sunset:
+    - if T < 3_hours &rarr; R3_ON, Tstart = current_time
+    - if T + (current_time - Tstart) > 3_hours &rarr; OFF
 
 ## Authors
 
