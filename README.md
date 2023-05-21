@@ -127,7 +127,9 @@ The three relays have four states:
 
 The relays and the heat pump time counter T can be controlled using the following state machine that needs to be restarted every day:
 
-- Start == OFF:
+- Start:
+    - &rarr; OFF
+OFF:
     - T = 0
     - Ub > 25.5V &rarr; R1_ON
 - R1_ON:
@@ -137,8 +139,8 @@ The relays and the heat pump time counter T can be controlled using the followin
     - Ub < 24.9V &rarr; OFF, T += current_time - Tstart
     - Ub < 26.5V &rarr; R1_ON, T += current_time - Tstart
 - current_time > sunset:
-    - if T < 3_hours &rarr; R3_ON, Tstart = current_time
-    - if T + (current_time - Tstart) > 3_hours &rarr; OFF
+    - if T < 3_hours &rarr; R3_ON, Tend = current_time + max( 1_hour, 3_hours - T )
+    - if current_time > Tend &rarr; OFF
 
 ## Authors
 
