@@ -142,6 +142,8 @@ OFF:
     - if T < 3_hours &rarr; R3_ON, Tend = current_time + max( 1_hour, 3_hours - T )
     - if current_time > Tend &rarr; OFF
 
+I introduced Tend to ensure that the heat pum is not switched on for too short time.
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech)
