@@ -144,6 +144,16 @@ OFF:
 
 I introduced Tend and added the call to max to ensure that the heat pump is not switched on for too short time.
 
+## Fourth Approach with DPDT and Timer
+
+Ulrich suggests more rigorously ensuring the separation of the grid mains and PV electrical circuits using a DPDT relay controlled by the Arduino.
+Furthermore, the grid mains can go through a programmable timer outlet switch before reaching the relay.
+Then, the Arduino can run the heat pump on PV as long as possible, keep track of the running time per day, and switch the relay to grid mains for the remaining duration.
+The timer can be added to ensure that the heat pump does not run around the clock if the arduino fails.
+Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both electronic schematics and
+3D printing projects, ald also [fritzing.org](https://fritzing.org/.
+
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech)
