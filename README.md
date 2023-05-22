@@ -142,7 +142,7 @@ OFF:
     - if T < 3_hours &rarr; R3_ON, Tend = current_time + max( 1_hour, 3_hours - T )
     - if current_time > Tend &rarr; OFF
 
-I introduced Tend to ensure that the heat pum is not switched on for too short time.
+I introduced Tend and added the call to max to ensure that the heat pump is not switched on for too short time.
 
 ## Authors
 
