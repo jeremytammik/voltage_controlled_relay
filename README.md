@@ -1,7 +1,7 @@
 # Voltage Controlled Relay
 
 The voltage controlled relay controls a bank of relays based on the voltage of a PV battery.
-The input is the battery voltage in the range [24V,30V].
+The input is the battery voltage in the range [24V,31V].
 This is measured via a voltage divider to turn relays on and off when various thresholds are crossed:
 
 - [Board](#board)
@@ -27,9 +27,9 @@ Here is the schematic to hook up the voltage divider measuring the 24V battery i
 <img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
 </center>
 
-## Voltage Divider
+## Voltage Divider with Resistor
 
-We need to convert the input battery voltage range [24V,30V] to fit into the ESP32 ADC input voltage range [0V,3.3V],
+We need to convert the input battery voltage range [24V,31V] to fit into the ESP32 ADC input voltage range [0V,3.3V],
 cf. [ESP32 ADC tutorial &ndash; read analog voltage in Arduino](https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/).
 For simplicity, we implement a simple voltage divider using resistors.
 Unfortunately, this means that the lower part of the range will never be used.
@@ -49,7 +49,17 @@ that more or less fall into the correct range and then tweak the software
 calculation values until the voltage reported by the Arduino matches the
 real voltage applied externally.
 With Ra = 82k and Rb = 10k, a constant `a2b` of ca. 0.00742 can be used to
-map the ADC `int` range [0,4095] to the battery voltage range of ca. [0V,30.4V].
+map the ADC `int` range [0,4095] to the battery voltage range of ca. [0V,31V].
+
+This voltage divider translates the voltage range [0V,33V] to the ADC `int` range [0,4095],
+resulting in a resolution of ca. 0.8 mV per bit.
+
+## Voltage Shifter with Zener Diode
+
+Another [level shifting](https://itp.nyu.edu/physcomp/lessons/electronics/level-shifting/) option
+uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Zener_diode#Voltage_shifter).
+
+
 
 ### State Machine
 
