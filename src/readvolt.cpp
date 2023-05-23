@@ -23,9 +23,13 @@
 // (3.3/4096)*(ra+rb)/rb = 0.007412109375
 // tweak this value to match the real voltage:
 
+// ADC to battery voltage conversion factor 
+// using resistor-based voltage divider:
+
 #define ADC2BAT 0.007412109375
 
-float readVoltage() {
+float readVoltage() 
+{
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
   //float adc_volt = (adc_raw * 3.3) / (4095);
   //float battery_volt = adc_volt * ((RA+RB)/RB);
@@ -36,4 +40,27 @@ float readVoltage() {
     adc_raw, battery_volt);
 
   return battery_volt;
+}
+
+VoltRange classifyVoltage()
+{
+  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
+
+  // ADC to battery voltage conversion 
+  // using 24V Zener diode shifter and 1:2 divider:
+
+  double battery_volt = (adc_raw / 2048.0) + 24;
+
+  VoltRange result = Empty;
+
+  if( adc_raw > AdcHigh ) { result = High; }
+  else if( adc_raw > AdcGood ) { result = Good; }
+  else if( adc_raw > AdcOk ) { result = Ok; }
+  else if( adc_raw > AdcLow ) { result = Low; }
+
+  Serialprintln(
+    "readVoltage ADC raw %d ~ %fV battery --> %d",
+    adc_raw, battery_volt, result);
+
+  return result;
 }
