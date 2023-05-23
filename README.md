@@ -6,7 +6,8 @@ This is measured via a voltage divider to turn relays on and off when various th
 
 - [Board](#board)
 - [Schematic](#schematic)
-- [Voltage divider](#voltage-divider)
+- [Voltage divider with Resistor](#voltage-divider-with-resistor)
+- [Voltage shifter with zener diode](voltage-shifter-with-zener-diode)
 - [State machine](#state-machine)
 - [Second approach](#second-approach)
 - [Third approach with heat pump](#third-approach-with-heat-pump)
@@ -164,9 +165,7 @@ Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both ele
 ## System Time
 
 The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
-Set it using ``
-
-https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228
+Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228).
 
 ## Authors
 
