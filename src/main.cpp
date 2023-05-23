@@ -73,7 +73,7 @@ void setup()
 void loop()
 {
     State old_state = current_state();
-    float v = readVoltage();
+    VoltRange voltRange = classifyVoltage();
 
     btController.send("BAT_VOLTS", String(v));
 
