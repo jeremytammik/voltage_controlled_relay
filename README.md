@@ -59,8 +59,6 @@ resulting in a resolution of ca. 0.8 mV per bit.
 Another [level shifting](https://itp.nyu.edu/physcomp/lessons/electronics/level-shifting/) option
 uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Zener_diode#Voltage_shifter).
 
-
-
 ### State Machine
 
 In the first approach, we used the YA_FSM library to implement a state machine to manage the relay states and transitions
@@ -163,6 +161,12 @@ The timer can be added to ensure that the heat pump does not run around the cloc
 Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both electronic schematics and
 3D printing projects, ald also [fritzing.org](https://fritzing.org/.
 
+## System Time
+
+The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
+Set it using ``
+
+https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228
 
 ## Authors
 

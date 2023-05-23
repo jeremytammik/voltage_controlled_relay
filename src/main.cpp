@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "pins.h"
+#include "jsettime.h"
 #include "readvolt.h"
 #include "util.h"
 #include "timerdelay.h"
@@ -53,6 +54,15 @@ void setup()
 
     Serial.println(F("Starting the Voltage Controlled Switch...\n"));
     dropLoads(); // turn off all loads
+
+    int year = 2023;
+    int month = 4; // [0,11], January = 0
+    int day = 24;
+    int hour = 0; // [0,24]
+    int minute = 0; // [0,59]
+    int second = 0; // [0.59]
+
+    jsettime(year, month, day, hour, minute, second );
 
     // Initialize bluetooth and its delay timer
     btController.init();
