@@ -11,11 +11,12 @@ BluetoothController btController;
 
 void dropLoads();
 
-// Voltage thresholds to turn on and off relay R1 and R2
-float voltageTurnOnR1 = 25.5;
-float voltageTurnOffAll = 24.9;
-float voltageTurnOnR2 = 27.0;
-float voltageTurnOffR2 = 26.5;
+// ADC thresholds to turn on and off relay R1 and R2
+
+int adcTurnOffAll = 368; // 24.9V
+int adcTurnOnR1 = 614; // 25.5V
+int adcTurnOffR2 = 1024; // 26.5V
+int adcTurnOnR2 = 1228; // 27.0V
 
 // Output variables
 bool r1_on = false;
@@ -73,28 +74,28 @@ void setup()
 void loop()
 {
     State old_state = current_state();
-    VoltRange voltRange = classifyVoltage();
+    int adc = readVoltage();
 
-    btController.send("BAT_VOLTS", String(v));
+    btController.send("BAT_ADC", String(adc));
 
     if( OFF == old_state)
     {
-        if( voltageTurnOnR2 < v ) { r1_and_r2_on = true; }
-        else if( voltageTurnOnR1 < v ) { r1_on = true; }
+        if( adcTurnOnR2 < adc ) { r1_and_r2_on = true; }
+        else if( adcTurnOnR1 < adc ) { r1_on = true; }
     }
     else if( R1_ON == old_state)
     {
-        if( voltageTurnOffAll > v ) { r1_on = r1_and_r2_on = false; }
-        else if( voltageTurnOnR2 < v ) { r1_and_r2_on = true; }
+        if( adcTurnOffAll > adc ) { r1_on = r1_and_r2_on = false; }
+        else if( adcTurnOnR2 < adc ) { r1_and_r2_on = true; }
     }
     else if( R1_AND_R2_ON == old_state)
     {
-        if( voltageTurnOffAll > v ) { r1_on = r1_and_r2_on = false; }
-        else if( voltageTurnOffR2 > v ) { r1_and_r2_on = false; }
+        if( adcTurnOffAll > adc ) { r1_on = r1_and_r2_on = false; }
+        else if( adcTurnOffR2 > adc ) { r1_and_r2_on = false; }
     }
 
-    Serialprintln( "Voltage %fV - state %s --> %s",
-      v, stateName[old_state], stateName[current_state()]);
+    Serialprintln( "ADC %d - state %s --> %s",
+      adc, stateName[old_state], stateName[current_state()]);
 
     // Set outputs
     digitalWrite(LOAD_1_LED, r1_on || r1_and_r2_on);

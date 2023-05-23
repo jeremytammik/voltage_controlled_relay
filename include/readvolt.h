@@ -3,8 +3,9 @@
 
 // readvolt.h -- read voltage
 
-//float readVoltage();
+int readVoltage(); // return raw ADC 
 
+/*
 enum VoltRange
 {
     Empty, // [0,24.9]
@@ -30,5 +31,6 @@ enum AdcRange
 };
 
 VoltRange classifyVoltage();
+*/
 
 #endif // READVOLT_H

@@ -14,8 +14,8 @@
 // https://ohmslawcalculator.com/voltage-divider-calculator
 // Vadc = Vbat * Rb/(Ra+Rb)
 // Vbat = Vadc * (Ra+Rb)/Rb
-#define RA 81200
-#define RB 10000
+//#define RA 81200
+//#define RB 10000
 
 // Ra = 82k, Rb = 10k
 // 3.3/4096 * (82+12)/12
@@ -26,22 +26,25 @@
 // ADC to battery voltage conversion factor 
 // using resistor-based voltage divider:
 
-#define ADC2BAT 0.007412109375
+//#define ADC2BAT 0.007412109375
 
-float readVoltage() 
+int readVoltage() 
 {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
   //float adc_volt = (adc_raw * 3.3) / (4095);
   //float battery_volt = adc_volt * ((RA+RB)/RB);
-  double battery_volt = adc_raw * ADC2BAT;
+  //double battery_volt = adc_raw * ADC2BAT;
+
+  double battery_volt = (adc_raw / 2048.0) + 24;
 
   Serialprintln(
     "readVoltage ADC raw %d ~ %fV battery",
     adc_raw, battery_volt);
 
-  return battery_volt;
+  return adc_raw;
 }
 
+/*
 VoltRange classifyVoltage()
 {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
@@ -64,3 +67,4 @@ VoltRange classifyVoltage()
 
   return result;
 }
+*/
