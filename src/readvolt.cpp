@@ -28,17 +28,18 @@
 
 //#define ADC2BAT 0.007412109375
 
+double vmax = 29.3;
+double vmin = 23.4;
+double vdiff = vmax - vmin;
+
 int readVoltage() 
 {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
-  //float adc_volt = (adc_raw * 3.3) / (4095);
-  //float battery_volt = adc_volt * ((RA+RB)/RB);
-  //double battery_volt = adc_raw * ADC2BAT;
 
-  double battery_volt = (adc_raw / 2048.0) + 24;
+  double battery_volt = (adc_raw / 4096.0) * vdiff + vmin;
 
   Serialprintln(
-    "readVoltage ADC raw %d ~ %fV battery",
+    "readVoltage ADC raw %d ~ ca. %fV battery",
     adc_raw, battery_volt);
 
   return adc_raw;
