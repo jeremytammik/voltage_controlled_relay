@@ -69,6 +69,11 @@ That range can be transformed to [0V,5V] by a 1:2 resistor-based voltage divider
 The first test measurement indicates that the voltage across a 10k resistor preceded
 by the two Zener diodes is reduced by ca. 23V, not 24V.
 
+23.3-23.6 75-80
+23.5-23.7 145-160
+23.7-24.0 315-325
+25.1-25.4 1155-1170
+
 ### State Machine
 
 In the first approach, we used the YA_FSM library to implement a state machine to manage the relay states and transitions
