@@ -1,6 +1,6 @@
 2023-05-24:
 
-Results measuring the battery voltage using a two 12V zener diode 23.2V voltage shifter followed by a 1:2 voltage divider with two 10k reistors:
+Results measuring the battery voltage using a two 12V zener diode 23.2V voltage shifter followed by a 1:2 voltage divider with two 10k resistors:
 
 <pre>
 23.2-23.4 0
