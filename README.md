@@ -28,6 +28,11 @@ Here is the schematic to hook up the voltage divider measuring the 24V battery i
 <img src="img/2023-02-22_relay_schematic_02.jpg" alt="Voltage controlled switch schematic" title="Voltage controlled switch schematic" width="500"/> <!-- 1788 x 1318 pixels -->
 </center>
 
+## Power Supply
+
+After various attempts, I discovered I have a JM14HS LM2576S module that takes an input range of [8V,36V] and produces a reliable 5V output to fee the ESP32.
+
+
 ## Voltage Divider with Resistor
 
 We need to convert the input battery voltage range [24V,31V] to fit into the ESP32 ADC input voltage range [0V,3.3V],
