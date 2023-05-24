@@ -71,6 +71,10 @@ by the two Zener diodes is reduced by ca. 23.2V, not 24V:
 
 - [Voltage measurement results](doc/voltage_measurement.md)
 
+Oh dear, I made a mistake: the ADC input range is [0V,3.3V], not [0V,5V].
+Consequently, with the 1:2 10k + 10k resistor-based voltage divider, all voltages above ca. 29.3V generate an ADC output of 4095.
+Luckily, contrary to some statements I've seen, the higher input voltage up to 4V or even 5V did not seem to do any harm.
+And since I don't care about differences above 29V, and they hardly occur in my context, I think I'll leave the current voltage divider in place.
 
 ### State Machine
 
