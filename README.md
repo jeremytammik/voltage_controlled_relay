@@ -66,6 +66,8 @@ Another [level shifting](https://itp.nyu.edu/physcomp/lessons/electronics/level-
 uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Zener_diode#Voltage_shifter).
 I got two 12V 1.3W BZX85C12; they can be used to shift the range [24V,34V] down to [0V,10V].
 That range can be transformed to [0V,5V] by a 1:2 resistor-based voltage divider.
+The first test measurement indicates that the voltage across a 10k resistor preceded
+by the two Zener diodes is reduced by ca. 23V, not 24V.
 
 ### State Machine
 
