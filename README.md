@@ -6,8 +6,8 @@ This is measured via a voltage divider to turn relays on and off when various th
 
 - [Board](#board)
 - [Schematic](#schematic)
-- [Voltage divider with Resistor](#voltage-divider-with-resistor)
-- [Voltage shifter with zener diode](voltage-shifter-with-zener-diode)
+- [Voltage divider with resistor](#voltage-divider-with-resistor)
+- [Voltage shifter with Zener diode](voltage-shifter-with-zener-diode)
 - [State machine](#state-machine)
 - [Second approach](#second-approach)
 - [Third approach with heat pump](#third-approach-with-heat-pump)
