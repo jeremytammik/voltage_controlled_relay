@@ -67,31 +67,10 @@ uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Ze
 I got two 12V 1.3W BZX85C12; they can be used to shift the range [24V,34V] down to [0V,10V].
 That range can be transformed to [0V,5V] by a 1:2 resistor-based voltage divider.
 The first test measurement indicates that the voltage across a 10k resistor preceded
-by the two Zener diodes is reduced by ca. 23V, not 24V.
+by the two Zener diodes is reduced by ca. 23.2V, not 24V:
 
-23.2-23.4 0
-23.3-23.5 0-2
-23.3-23.6 75-80 64-77
-23.5-23.7 145-160
-23.7-24.0 315-325
-23.9-24.1 374-384
-24.1-24.4 530-550
-24.4-24.6 694-704 671-704
-24.5-24.7 775-780
-24.6-24.8 829-843
-24.7-24.9 880-915
-24.9-25.1 1009-1021
-25.1-25.4 1178-1210
-25.1-25.4 1155-1170
-26.3-26.5 1940-1960
-26.4-26.6 1941-1955
-27.0-27.2 2353-2368
-29.0-29.2 3839-3889
-29.0-29.3 3902-3919
-29.1-29.4 4016-4045
-29.2-29.4 4042-4095
-29.2-29.4 4095
-29.5-29.8 4095
+- [Voltage measurement results](doc/voltage_measurement.md)
+
 
 ### State Machine
 
