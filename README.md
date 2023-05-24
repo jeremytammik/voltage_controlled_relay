@@ -59,7 +59,7 @@ resulting in a resolution of ca. 0.8 mV per bit.
 
 Another [level shifting](https://itp.nyu.edu/physcomp/lessons/electronics/level-shifting/) option
 uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Zener_diode#Voltage_shifter).
-I got two 12V 1.3W 22631; they can be used to shift the range [24V,34V] down to [0V,10V].
+I got two 12V 1.3W BZX85C12; they can be used to shift the range [24V,34V] down to [0V,10V].
 That range can be transformed to [0V,5V] by a 1:2 resistor-based voltage divider.
 
 ### State Machine
