@@ -29,4 +29,4 @@ Results measuring the battery voltage using a two 12V zener diode 23.2V voltage 
 29.2-29.4 4042-4095
 29.2-29.4 4095
 29.5-29.8 4095
-</pre>
+</pre> 

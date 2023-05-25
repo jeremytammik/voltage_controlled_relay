@@ -16,4 +16,4 @@ void jsettime(int year, int month, int day, int hour, int minute, int second )
     Serialprintln("Setting time: %s", asctime(&tm));
     struct timeval now = { .tv_sec = t };
     settimeofday(&now, NULL);
-}
+}  
