@@ -180,7 +180,7 @@ Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both ele
 
 Oh dear, just noticed that driving a relay is completely different
 from [driving a relay module](https://maker.pro/arduino/projects/driving-a-relay-with-an-arduino).
-We use a 2N2222 NPN transistor, a 1N4007 diode, 1k reistor from the ESP32 output pin to the 2N2222 base
+We use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 output pin to the 2N2222 base.
 
 ## System Time
 
