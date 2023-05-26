@@ -194,9 +194,9 @@ During our absence, I want the hot water heat pump (wwwp) to run on PV, at least
 Hence, a rather hurried final first implementation and live test before leaving.
 I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver described above:
 
-<img src="live_test_with_r1_and_r2_1.jpg" width="400"/>
-<img src="live_test_with_r1_and_r2_2.jpg" width="400"/>
-<img src="live_test_with_r2_only.jpg" width="400"/>
+<img src="img/live_test_with_r1_and_r2_1.jpg" width="400"/>
+<img src="img/live_test_with_r1_and_r2_2.jpg" width="400"/>
+<img src="img/live_test_with_r2_only.jpg" width="400"/>
 
 Important aspect: when the Arduino is turned off, the relay remains in the low voltage default state, which is grid mains.
 The voltage measurement uses the two 12V Zener diodes plus 1:2 voltage divieder.
