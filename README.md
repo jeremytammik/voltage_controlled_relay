@@ -216,8 +216,8 @@ According to our [measurements so far](https://waldrain.github.io/moniwonig#wwwp
 
 On second thoughts, a better approach would be to only implement R1 instead of R2 and connect the wwwp to the moniwonig standard mains.
 That runs on PV by default and includes an automatic switch to grid mains when no AC electricity is provided by the inverter.
-Currently, this state is only reraches when the battery is completely empty asnd the entire PV system breaks down.
-However, using R1 to remove the load from the inverter below a battery threshold voltage of ca. 25.5V would gracefully switch to grid mains asnd all would be fine.
+Currently, this state is only reached when the battery is completely empty and the entire PV system breaks down.
+However, using R1 to remove the load from the inverter below a battery threshold voltage of ca. 25.5V would prevent the breakdown, gracefully switch to grid mains and all would be fine.
 
 ## Authors
 
