@@ -176,7 +176,10 @@ Furthermore, the grid mains can go through a programmable timer outlet switch be
 Then, the Arduino can run the heat pump on PV as long as possible, keep track of the running time per day, and switch the relay to grid mains for the remaining duration.
 The timer can be added to ensure that the heat pump does not run around the clock if the arduino fails.
 Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both electronic schematics and
-3D printing projects, ald also [fritzing.org](https://fritzing.org/.
+3D printing projects, ald also [fritzing.org](https://fritzing.org/).
+
+Oh dear, just noticed that driving a relay is completely different
+from [driving a relay module](https://maker.pro/arduino/projects/driving-a-relay-with-an-arduino).
 
 ## System Time
 
