@@ -189,8 +189,8 @@ Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-id
 
 ## Live Test
 
-We leave the house for a while end of May.
-During our absence, I want the hot water heat pump (wwwp) to run on PV, at least part of the time.
+We leave the house for a while in June.
+During our absence, I want the hot water heat pump (wwwp) to run on PV as much as possible.
 Hence, a rather hurried final first implementation and live test before leaving.
 I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver described above:
 
@@ -201,7 +201,7 @@ I eliminate R1 and just left R2 implemented using the DPDT relay with the relay 
 
 Important aspect: when the Arduino is turned off, the relay remains in the low voltage default state, which is grid mains.
 The voltage measurement uses the two 12V Zener diodes plus 1:2 voltage divieder.
-The trigger voltages a manually defined in ADC units:
+The trigger voltages are manually defined in approximate ADC units:
 
 ```
 int adcTurnOffAll = 1200; // 25.2V
@@ -210,8 +210,9 @@ int adcTurnOffR2 = 1950; // 26.5V
 int adcTurnOnR2 = 2350; // 27.0V
 ```
 
-The wwwp is fed either directly by PV, when over the R2 trigger voltages, or else by grid mains.
-We use the internal wwwp clock to limit its operation from 12:00 noon until 16:00 every day, and set its target water temperature to 48&#176;C.
+The wwwp is fed directly by PV when the relay is on, i.e., over the R2 trigger voltages, or else by grid mains.
+We use the internal wwwp clock to limit its operation to four hours from 12:00 noon until 16:00 every day, and set its target water temperature to 48&#176;C.
+According to our [measurements so far](https://waldrain.github.io/moniwonig#wwwp), that ought ot suffice.
 
 On second thoughts, a better approach would be to only implement R1 instead of R2 and connect the wwwp to the moniwonig standard mains.
 That runs on PV by default and includes an automatic switch to grid mains when no AC electricity is provided by the inverter.
