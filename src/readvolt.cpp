@@ -28,8 +28,8 @@
 
 //#define ADC2BAT 0.007412109375
 
-double vmax = 29.3;
-double vmin = 23.4;
+double vmin = 23.5;
+double vmax = 29.4;
 double vdiff = vmax - vmin;
 
 int readVoltage() 
