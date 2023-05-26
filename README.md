@@ -187,9 +187,35 @@ We use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 outpu
 The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
 Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228).
 
+## Live Test
+
+We leave the house for a while end of May.
+During our absence, I want the hot water heat pump (wwwp) to run on PV, at least part of the time.
+Hence, a rather hurried final first implementation and live test before leaving.
+I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver described above.
+Important aspect: when the Arduino is turned off, the relay remains in the low voltage default state, which is grid mains.
+The voltage measurement uses the two 12V Zener diodes plus 1:2 voltage divieder.
+The trigger voltages a manually defined in ADC units:
+
+```
+int adcTurnOffAll = 1200; // 25.2V
+int adcTurnOnR1 = 1500; // 26.0V
+int adcTurnOffR2 = 1950; // 26.5V
+int adcTurnOnR2 = 2350; // 27.0V
+```
+
+The wwwp is fed either directly by PV, when over the R2 trigger voltages, or else by grid mains.
+We use the internal wwwwp clock to limit its operation from 12:00 noon until 16:00 every day, and set its target water temperature to 48#176;C.
+
+On second thoughts, a better approach would be to only implement R1 instead of R2 and connect the wwwp to the moniwonig standard mains.
+That runs on PV by default and includes an automatic switch to grid mains when no AC electricity is provided by the inverter.
+Currently, this state is only reraches when the battery is completely empty asnd the entire PV system breaks down.
+However, using R1 to remove the load from the inverter below a battery threshold voltage of ca. 25.5V would gracefully switch to grid mains asnd all would be fine.
+
 ## Authors
 
-[Allan Kipkirui Koech](https://github.com/allankkoech)
+[Allan Kipkirui Koech](https://github.com/allankkoech) in Nairobi,
+Ulrich from Loerrach
 and Jeremy Tammik,
 [The Building Coder](http://thebuildingcoder.typepad.com),
 [Autodesk Platform Services APS](http://aps.autodesk.com),
