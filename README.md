@@ -187,7 +187,7 @@ We use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 outpu
 The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
 Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228).
 
-## Live Test
+## Live Test 2023-05-26
 
 We leave the house for a while in June.
 During our absence, I want the hot water heat pump (wwwp) to run on PV as much as possible.
@@ -218,6 +218,10 @@ On second thoughts, a better approach would be to only implement R1 instead of R
 That runs on PV by default and includes an automatic switch to grid mains when no AC electricity is provided by the inverter.
 Currently, this state is only reached when the battery is completely empty and the entire PV system breaks down.
 However, using R1 to remove the load from the inverter below a battery threshold voltage of ca. 25.5V would prevent the breakdown, gracefully switch to grid mains and all would be fine.
+
+Later: it did not work out, and Joerg had to switch the wwwp to grid mains and limit its consumption by lowering the target temperature to 47 degrees and specifying two three-hour time slots to run in, 0-3 and 12-15 o'clock.
+Then, the consumption was acceptable.
+Now, in July, turning it on and off manually, I reach 65 degrees hot water every day using PV only.
 
 ## Authors
 
