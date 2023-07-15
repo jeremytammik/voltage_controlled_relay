@@ -187,7 +187,7 @@ We use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 outpu
 The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
 Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-idf/blob/9a55b42f0841b3d38a61089b1dda4bf28135decd/components/fatfs/test/test_fatfs_common.c#L218-L228).
 
-## Live Test 2023-05-26
+## Live Test 1 2023-05-26
 
 We leave the house for a while in June.
 During our absence, I want the hot water heat pump (wwwp) to run on PV as much as possible.
@@ -195,9 +195,12 @@ Hence, a rather hurried final first implementation and live test before leaving.
 I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver described above:
 
 <table>
-  <tr><td><img src="img/live_test_with_r1_and_r2_1.jpg" width="200"/></td>
+  <tr>
+    <td><img src="img/live_test_with_r1_and_r2_1.jpg" width="200"/></td>
     <td><img src="img/live_test_with_r1_and_r2_2.jpg" width="200"/></td>
-    <td><img src="img/live_test_with_r2_only.jpg" width="200"/></td></tr></table>
+    <td><img src="img/live_test_with_r2_only.jpg" width="200"/></td>
+  </tr>
+</table>
 
 Important aspect: when the Arduino is turned off, the relay remains in the low voltage default state, which is grid mains.
 The voltage measurement uses the two 12V Zener diodes plus 1:2 voltage divieder.
@@ -219,9 +222,18 @@ That runs on PV by default and includes an automatic switch to grid mains when n
 Currently, this state is only reached when the battery is completely empty and the entire PV system breaks down.
 However, using R1 to remove the load from the inverter below a battery threshold voltage of ca. 25.5V would prevent the breakdown, gracefully switch to grid mains and all would be fine.
 
-Later: it did not work out, and Joerg had to switch the wwwp to grid mains and limit its consumption by lowering the target temperature to 47 degrees and specifying two three-hour time slots to run in, 0-3 and 12-15 o'clock.
+Later: it did not work out.
+Why is unclear.
+Testing the circuit manually in July, everything still works as expected.
+Joerg had to switch the wwwp to grid mains and limit its consumption by lowering the target temperature to 47 degrees and specifying two three-hour time slots to run in, 0-3 and 12-15 o'clock.
 Then, the consumption was acceptable.
 Now, in July, turning it on and off manually, I reach 65 degrees hot water every day using PV only.
+
+## Live Test 2 2023-07-15
+
+This time around, I just want to use the voltage controlled switch as an emergency cut-off to remove all loads from the PV inverter if the DC voltege is too low, e.g., below 25.1V.
+I lowered the `adcTurnOffAll` threshold to 1000 ADC units and left the others as above.
+I increased the LED series resistors from 330 ohm to 1 kohm to reduce the light intensity and current used.
 
 ## Authors
 
