@@ -196,9 +196,9 @@ I eliminate R1 and just left R2 implemented using the DPDT relay with the relay 
 
 <table>
   <tr>
-    <td><img src="img/live_test_with_r1_and_r2_1.jpg" width="200"/></td>
-    <td><img src="img/live_test_with_r1_and_r2_2.jpg" width="200"/></td>
-    <td><img src="img/live_test_with_r2_only.jpg" width="200"/></td>
+    <td><img src="img/2023-05-26_live_test_with_r1_and_r2_1.jpg" width="200"/></td>
+    <td><img src="img/2023-05-26_live_test_with_r1_and_r2_2.jpg" width="200"/></td>
+    <td><img src="img/2023-05-26_live_test_with_r2_only.jpg" width="200"/></td>
   </tr>
 </table>
 
@@ -234,6 +234,15 @@ Now, in July, turning it on and off manually, I reach 65 degrees hot water every
 This time around, I just want to use the voltage controlled switch as an emergency cut-off to remove all loads from the PV inverter if the DC voltege is too low, e.g., below 25.1V.
 I lowered the `adcTurnOffAll` threshold to 1000 ADC units and left the others as above.
 I increased the LED series resistors from 330 ohm to 1 kohm to reduce the light intensity and current used.
+
+<table>
+  <tr>
+    <td><img src="img/2023-07-15_test_2.jpg" width="200"/></td>
+    <td><img src="img/2023-07-15_test_2_off.jpg" width="200"/></td>
+    <td><img src="img/2023-07-15_test_2_r1.jpg" width="200"/></td>
+    <td><img src="img/2023-07-15_test_2_r2.jpg" width="200"/></td>
+  </tr>
+</table>
 
 ## Authors
 
