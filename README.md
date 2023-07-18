@@ -244,6 +244,13 @@ I increased the LED series resistors from 330 ohm to 1 kohm to reduce the light 
   </tr>
 </table>
 
+## Live Test 2 2023-07-18
+
+During the installation three days ago, I touched one of the Zener diodes and burnt it out.
+Replaced them both with a single 24V Zener diode, adjusted the `readVolt` parameters for a more accurate voltage report, and lowered the ADC thresholds accordingly.
+Right now, the only function is the emergency cut-off.
+The advantage is that if the PV power is cut off, the other switch box automatically toggles the entire supply to grid mains, including the WWWP.
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech) in Nairobi,
