@@ -28,15 +28,16 @@
 
 //#define ADC2BAT 0.007412109375
 
-double vmin = 23.5;
-double vmax = 29.4;
-double vdiff = vmax - vmin;
+double vrange = 2 * 3.3; // max ADC range with 1:2 voltage divider
+double vmin = 24.5;
+double vmax = vmin + vrange;
+//double vdiff = vmax - vmin;
 
 int readVoltage() 
 {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
 
-  double battery_volt = (adc_raw / 4096.0) * vdiff + vmin;
+  double battery_volt = (adc_raw / 4096.0) * vrange + vmin;
 
   Serialprintln(
     "readVoltage ADC raw %d ~ ca. %fV battery",
