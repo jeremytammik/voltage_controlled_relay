@@ -11,14 +11,12 @@ BluetoothController btController;
 
 void dropLoads();
 
-// ADC thresholds to turn on and off relay R1 and R2
-// AdcThreshold = (Ub - 23V) * 0.1 / 4096
+// ADC thresholds to turn on and off relays R1 and R2
 
-//int adcTurnOffAll = 1200; // 25.2V
-int adcTurnOffAll = 1000; // 25.1V
-int adcTurnOnR1 = 1500; // 26.0V
-int adcTurnOffR2 = 1950; // 26.5V
-int adcTurnOnR2 = 2350; // 27.0V
+int adcTurnOffAll = 400; // 25.3V
+int adcTurnOnR1 = 1000; // 26.0V
+int adcTurnOffR2 = 1300; // 26.5V
+int adcTurnOnR2 = 1700; // 27.0V
 
 // Output variables
 bool r1_on = false;
