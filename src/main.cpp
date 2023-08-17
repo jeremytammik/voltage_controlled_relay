@@ -13,7 +13,7 @@ void dropLoads();
 
 // ADC thresholds to turn on and off relays R1 and R2
 
-int adcTurnOffAll = 400; // 25.3V
+int adcTurnOffAll = 300; // 25.2V
 int adcTurnOnPv = 1000; // 26.0V
 //int adcTurnOffR2 = 1300; // 26.5V
 //int adcTurnOnR2 = 1700; // 27.0V
