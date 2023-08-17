@@ -251,6 +251,16 @@ Replaced them both with a single 24V Zener diode, adjusted the `readVolt` parame
 Right now, the only function is the emergency cut-off.
 The advantage is that if the PV power is cut off, the other switch box automatically toggles the entire supply to grid mains, including the WWWP.
 
+## Fifth Approach 2023-08-17
+
+Requirements have evolved. Currently, they are:
+
+- Control a relay that removes all loads from the PV system if the battery is low, e.g., below 25.0V; default to off
+- Control a DPDT relay controlling the heat pump power source, toggling between PV and grid mains; use PV if the battery voltage of above 25.9V; default to grid mains
+- Control a heat pump PV switch which turns on the heat pump if the PV voltage is high, say above 26.7V; default to off
+
+If the Arduino power is turned off, retin the default states.
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech) in Nairobi,

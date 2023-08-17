@@ -29,7 +29,7 @@
 //#define ADC2BAT 0.007412109375
 
 double vrange = 2 * 3.3; // max ADC range with 1:2 voltage divider
-double vmin = 24.5;
+double vmin = 24.7;
 double vmax = vmin + vrange;
 //double vdiff = vmax - vmin;
 

@@ -19,28 +19,28 @@ int adcTurnOffR2 = 1300; // 26.5V
 int adcTurnOnR2 = 1700; // 27.0V
 
 // Output variables
-bool r1_on = false;
-bool r1_and_r2_on = false;
+bool pv_on = false;
+bool pv_and_hp_on = false;
+bool pv_and_hp_and_hppv_on = false;
 
 // States
 enum State
 {
     OFF, // == Start
-    R1_ON,
-    R1_AND_R2_ON
+    PV_ON,
+    PV_AND_HP_ON, 
+    PV_AND_HP_AND_HPPV_ON
 };
 
 // Helper for print labels instead integer when state change
-const char * const stateName[] PROGMEM = {"OFF", "R1_ON", "R1_AND_R2_ON"};
+const char * const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
 
-// Current state
-//State current_state = OFF;
-
-// The three states are tracked and maintained using the two output variables
+// The current state is determined from the two output variables
 State current_state()
 {
-    if(r1_and_r2_on) { return R1_AND_R2_ON; }
-    else if(r1_on) { return R1_ON; }
+    if(pv_and_hp_and_hppv_on) { return PV_AND_HP_AND_HPPV_ON; }
+    else if(pv_and_hp_on) { return PV_AND_HP_ON; }
+    else if(pv_on) { return PV_ON; }
     else return OFF;
 }
 
@@ -52,7 +52,8 @@ void setup()
     } // Needed for native USB port only
 
     Serial.println(F("Starting the Voltage Controlled Switch...\n"));
-    dropLoads(); // turn off all loads
+
+    turnOffAll();
 
     int year = 2023;
     int month = 4; // [0,11], January = 0
@@ -124,6 +125,27 @@ void setOn(int pin)
 void setOff(int pin)
 {
     digitalWrite(pin, LOW);
+}
+
+void turnOffAll()
+{
+    setOn(LOAD_1_RELAY); // PV is off when relay is on
+    setOff(LOAD_1_LED);
+
+    setOff(LOAD_2_RELAY);
+    setOff(LOAD_2_LED);
+
+    setOff(LOAD_3_RELAY);
+    setOff(LOAD_3_LED);
+
+    setOff(LOAD_4_RELAY);
+    setOff(LOAD_4_LED);
+
+    setOff(LOAD_5_RELAY);
+    setOff(LOAD_5_LED);
+
+    setOff(LOAD_6_RELAY);
+    setOff(LOAD_6_LED);
 }
 
 // Turn ON/OFF the loads

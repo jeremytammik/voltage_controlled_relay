@@ -8,12 +8,12 @@
 #define LOAD_1_LED      19  // GPIO19
 
 // Load 2
-#define LOAD_2_RELAY    18   // GPIO18
+#define LOAD_2_RELAY    18 // GPIO18
 #define LOAD_2_LED      5  // GPIO5
 
 // Load 3
 #define LOAD_3_RELAY    4  // GPIO4
-#define LOAD_3_LED      2   // GPIO2
+#define LOAD_3_LED      2  // GPIO2
 
 // Load 4
 #define LOAD_4_RELAY    15  // GPIO15
