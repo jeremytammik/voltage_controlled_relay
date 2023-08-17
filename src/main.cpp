@@ -139,27 +139,6 @@ void setOff(int pin)
     digitalWrite(pin, LOW);
 }
 
-void turnOffAll()
-{
-    setOn(LOAD_1_RELAY); // PV is off when relay is on
-    setOff(LOAD_1_LED);
-
-    setOff(LOAD_2_RELAY);
-    setOff(LOAD_2_LED);
-
-    setOff(LOAD_3_RELAY);
-    setOff(LOAD_3_LED);
-
-    setOff(LOAD_4_RELAY);
-    setOff(LOAD_4_LED);
-
-    setOff(LOAD_5_RELAY);
-    setOff(LOAD_5_LED);
-
-    setOff(LOAD_6_RELAY);
-    setOff(LOAD_6_LED);
-}
-
 // Turn ON/OFF the loads
 void dropLoads()
 {
