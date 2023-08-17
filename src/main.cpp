@@ -74,8 +74,9 @@ int loopCount = 0;
 
 void loop()
 {
+    bool printIt = (0 == (++loopCount % 100));
+    int adc = readVoltage( printIt );
     State old_state = current_state();
-    int adc = readVoltage();
 
     //btController.send("BAT_ADC", String(adc));
 
@@ -99,7 +100,7 @@ void loop()
 
     State current = current_state();
 
-    if( (old_state != current) || (0 == (++loopCount % 100)) ) {
+    if( (old_state != current) || printIt ) {
       Serialprintln( "ADC %d - state %s --> %s",
         adc, stateName[old_state], stateName[current]);
 

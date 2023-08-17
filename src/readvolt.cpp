@@ -33,15 +33,17 @@ double vmin = 24.7;
 double vmax = vmin + vrange;
 //double vdiff = vmax - vmin;
 
-int readVoltage() 
+int readVoltage( bool printIt ) 
 {
   int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
 
   double battery_volt = (adc_raw / 4096.0) * vrange + vmin;
 
-  Serialprintln(
-    "readVoltage ADC raw %d ~ ca. %fV battery",
-    adc_raw, battery_volt);
+  if( printIt ) {
+    Serialprintln(
+      "readVoltage ADC raw %d ~ ca. %fV battery",
+      adc_raw, battery_volt);
+  }
 
   return adc_raw;
 }

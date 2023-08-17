@@ -3,7 +3,7 @@
 
 // readvolt.h -- read voltage
 
-int readVoltage(); // return raw ADC 
+int readVoltage( bool printIt ); // return raw ADC 
 
 /*
 enum VoltRange
