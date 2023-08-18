@@ -31,5 +31,7 @@
 #define VOLTAGE_INPUT_SENSOR  34      // GPIO34
 
 void setupPins();
+void dropLoads();
+void setLoads( bool pv, bool hp, bool hppv );
 
 #endif // PINS_H
