@@ -11,12 +11,12 @@ BluetoothController btController;
 
 // ADC thresholds to turn on and off relays R1 and R2
 
-int adcTurnOffPv = 300; // 25.2V -- remove all loads from PV system
-int adcTurnOnPv = 1000; // 26.2V -- attach moniwonig electricity to PV
-int adcTurnOffHp = 1300; // 26.5V -- drive heat pump from grid mains, not PV
-int adcTurnOnHp = 1500; // 26.6V -- drive heat pump from PV, not grid mains
-int adcTurnOffHppv = 1300; // 26.5V -- turn off heat pump PV switch
-int adcTurnOnHppv = 1700; // 27.0V -- turn on heat pump PV switch, so it heats up to the max
+const int adcTurnOffPv = 300; // 25.2V -- remove all loads from PV system
+const int adcTurnOnPv = 1000; // 26.2V -- attach moniwonig electricity to PV
+const int adcTurnOffHp = 1300; // 26.5V -- drive heat pump from grid mains, not PV
+const int adcTurnOnHp = 1500; // 26.6V -- drive heat pump from PV, not grid mains
+const int adcTurnOffHppv = 1300; // 26.5V -- turn off heat pump PV switch
+const int adcTurnOnHppv = 1700; // 27.0V -- turn on heat pump PV switch, so it heats up to the max
 
 // Output variables
 //bool pv_on = false;
@@ -85,13 +85,12 @@ void loop()
   //btController.send("BAT_ADC", String(adc));
 
   State old_state = current_state;
-  State new_state = OFF;
+  State new_state = old_state;
   if( OFF == old_state)
   {
     if( adcTurnOnHppv < adc ) { new_state = PV_AND_HP_AND_HPPV_ON; }
     else if( adcTurnOnHp < adc ) { new_state = PV_AND_HP_ON; }
     else if( adcTurnOnPv < adc ) { new_state = PV_ON; }
-    else new_state = OFF;
   }
   else if( PV_ON == old_state)
   {
@@ -107,8 +106,7 @@ void loop()
   }
   else if( PV_AND_HP_AND_HPPV_ON == old_state)
   {
-    if( adcTurnOnHppv < adc ) { new_state = PV_AND_HP_AND_HPPV_ON; }
-    else if( adcTurnOffPv > adc ) { new_state = OFF; }
+    if( adcTurnOffPv > adc ) { new_state = OFF; }
     else if( adcTurnOffHp > adc ) { new_state = PV_ON; }
     else if( adcTurnOffHppv > adc ) { new_state = PV_AND_HP_ON; }
   }
