@@ -76,6 +76,11 @@ Consequently, with the 1:2 10k + 10k resistor-based voltage divider, all voltage
 Luckily, contrary to some statements I've seen, the higher input voltage up to 4V or even 5V did not seem to do any harm.
 And since I don't care about differences above 29V, and they hardly occur in my context, I think I'll leave the current voltage divider in place.
 
+## Voltage Smoothing with a Capacitor
+
+The ADC measurements were jumping up and down pretty erratically.
+I added a 22 uF capacitor between the ADC input sensor pin GPIO34 and ground and the problem went away.
+
 ### State Machine
 
 In the first approach, we used the YA_FSM library to implement a state machine to manage the relay states and transitions

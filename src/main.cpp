@@ -74,12 +74,13 @@ void setup()
 }
 
 int loopCount = 0;
+int skipPrintFor = 1000;
 
 void loop()
 {
   // Print status every 1000 ms
 
-  bool printIt = (0 == (++loopCount % 1000));
+  bool printIt = (0 == (++loopCount % skipPrintFor));
 
   int adc = readVoltage( printIt );
   //btController.send("BAT_ADC", String(adc));
