@@ -261,6 +261,12 @@ Requirements have evolved. Currently, they are:
 
 If the Arduino power is turned off, retin the default states.
 
+Question and possible simplification:
+you used separate Arduino outputs to control the relay and the led displaying its state.
+Wouldn't it be equally possible and a little bit more efficient to attach both relay and led to the same output?
+Answer: [How much current can I draw from the Arduino's pins?](https://electronics.stackexchange.com/questions/67092/how-much-current-can-i-draw-from-the-arduinos-pins)
+&ndash; max 40 mA per pin and max total from all pins 200 mA.
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech) in Nairobi,
