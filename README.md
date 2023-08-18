@@ -97,6 +97,16 @@ It is also equipped with a [wokwi simulation](https://wokwi.com/projects/3382484
 It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
+### Driving Relay Module and LED from Same Pin
+
+The initial design uses separate GPIO pins to control the relay and the led displaying its state.
+Wouldn't it be equally possible and a little bit more efficient to attach both relay and led to the same output?
+Answer: [How much current can I draw from the Arduino's pins?](https://electronics.stackexchange.com/questions/67092/how-much-current-can-i-draw-from-the-arduinos-pins)
+&ndash; max 40 mA per pin and max total from all pins 200 mA;
+ditto for the [ESP32 current limits](https://www.esp32.com/viewtopic.php?t=5840).
+The led consumes about 10 mA, and the relay module probably sucks about 5 mA,
+cf. [how does the Arduino 5VDC relay module work?](https://electronics.stackexchange.com/questions/622826/how-does-the-arduino-5vdc-relay-module-work-using-srd-05vdc-sl-c)
+
 ## Second approach
 
 Rewrote the switch using a very simple state machine implemented manually with no librasry and no timer settings.
@@ -259,13 +269,7 @@ Requirements have evolved. Currently, they are:
 - Control a DPDT relay controlling the heat pump power source, toggling between PV and grid mains; use PV if the battery voltage of above 25.9V; default to grid mains
 - Control a heat pump PV switch which turns on the heat pump if the PV voltage is high, say above 26.7V; default to off
 
-If the Arduino power is turned off, retin the default states.
-
-Question and possible simplification:
-you used separate Arduino outputs to control the relay and the led displaying its state.
-Wouldn't it be equally possible and a little bit more efficient to attach both relay and led to the same output?
-Answer: [How much current can I draw from the Arduino's pins?](https://electronics.stackexchange.com/questions/67092/how-much-current-can-i-draw-from-the-arduinos-pins)
-&ndash; max 40 mA per pin and max total from all pins 200 mA.
+If the Arduino power is turned off, retain the default states.
 
 ## Authors
 
