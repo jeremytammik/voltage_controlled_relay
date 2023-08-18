@@ -97,7 +97,7 @@ It is also equipped with a [wokwi simulation](https://wokwi.com/projects/3382484
 It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
-### Driving Relay Module and LED from Same Pin
+### Driving Relay Module and LED From Same Pin
 
 The initial design uses separate GPIO pins to control the relay and the led displaying its state.
 Wouldn't it be equally possible and a little bit more efficient to attach both relay and led to the same output?
