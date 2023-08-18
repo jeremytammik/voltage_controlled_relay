@@ -107,7 +107,7 @@ ditto for the [ESP32 current limits](https://www.esp32.com/viewtopic.php?t=5840)
 The led consumes about 10 mA, and the relay module probably sucks about 5 mA,
 cf. [how does the Arduino 5VDC relay module work?](https://electronics.stackexchange.com/questions/622826/how-does-the-arduino-5vdc-relay-module-work-using-srd-05vdc-sl-c)
 
-To take this one step further, I attached two LED, one red and one green,
+To take this one step further, I attached two LEDs, one red and one green,
 so that both the OFF and ON states are highlighted visually,
 using the very simple approach described
 in [figure 5](https://electronics.stackexchange.com/a/342185) in the answer
