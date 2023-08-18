@@ -97,7 +97,7 @@ It is also equipped with a [wokwi simulation](https://wokwi.com/projects/3382484
 It would be cool to set one up for this project as well.
 That might save a lot of effort implementing real-world tests.
 
-### Driving Relay Module and LED From Same Pin
+### Driving Relay Module and Two LEDs From Same Pin
 
 The initial design uses separate GPIO pins to control the relay and the led displaying its state.
 Wouldn't it be equally possible and a little bit more efficient to attach both relay and led to the same output?
@@ -106,6 +106,14 @@ Answer: [How much current can I draw from the Arduino's pins?](https://electroni
 ditto for the [ESP32 current limits](https://www.esp32.com/viewtopic.php?t=5840).
 The led consumes about 10 mA, and the relay module probably sucks about 5 mA,
 cf. [how does the Arduino 5VDC relay module work?](https://electronics.stackexchange.com/questions/622826/how-does-the-arduino-5vdc-relay-module-work-using-srd-05vdc-sl-c)
+
+To take this one step further, I attached two LED, one red and one green,
+so that both the OFF and ON states are highlighted visually,
+using the very simple approach described
+in [figure 5](https://electronics.stackexchange.com/a/342185) in the answer
+to [controlling two LEDs with one digital output](https://electronics.stackexchange.com/questions/342178/controlling-two-leds-with-one-digital-output)
+
+
 
 ## Second approach
 
