@@ -124,6 +124,7 @@ void loop()
       case PV_AND_HP_ON: setLoads( true, true, false ); break;
       case PV_AND_HP_AND_HPPV_ON: setLoads( true, true, true ); break;
       }
+      current_state = new_state;
     }
   }
 
