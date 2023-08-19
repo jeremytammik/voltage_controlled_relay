@@ -50,13 +50,13 @@ void dropLoads()
   // that control input.
   
   setOn(LOAD_1_RELAY); // PV is off when relay is on
-  setOff(LOAD_1_LED);
+  setOn(LOAD_1_LED);
 
   setOff(LOAD_2_RELAY);
   setOff(LOAD_2_LED);
 
-  setOff(LOAD_3_RELAY);
-  setOff(LOAD_3_LED);
+  setOn(LOAD_3_RELAY);
+  setOn(LOAD_3_LED);
 
   setOff(LOAD_4_RELAY);
   setOff(LOAD_4_LED);
@@ -73,5 +73,5 @@ void setLoads( bool pv, bool hp, bool hppv )
   digitalWrite(LOAD_1_RELAY, !pv);
   digitalWrite(LOAD_2_LED, hp);
   digitalWrite(LOAD_2_RELAY, hp);
-  digitalWrite(LOAD_3_RELAY, hppv);
+  digitalWrite(LOAD_3_RELAY, !hppv);
 }
