@@ -30,7 +30,7 @@ Here is the schematic to hook up the voltage divider measuring the 24V battery i
 
 ## Power Supply
 
-After various attempts, I discovered I have a JM14HS LM2576S module that takes an input range of [8V,36V] and produces a reliable 5V output to fee the ESP32.
+After various attempts, I discovered I have a JM14HS LM2576S module that takes an input range of [8V,36V] and produces a reliable 5V output to feed the ESP32.
 
 
 ## Voltage Divider with Resistor
