@@ -285,11 +285,14 @@ The advantage is that if the PV power is cut off, the other switch box automatic
 
 Requirements have evolved. Currently, they are:
 
-- Control a relay that removes all loads from the PV system if the battery is low, e.g., below 25.0V; default to off
-- Control a DPDT relay controlling the heat pump power source, toggling between PV and grid mains; use PV if the battery voltage of above 25.9V; default to grid mains
-- Control a heat pump PV switch which turns on the heat pump if the PV voltage is high, say above 26.7V; default to off
+- Control a relay R1 that removes all loads from the PV system if the battery is low, e.g., below 25.0V; default to `OFF`
+- Control a DPDT relay R2 toggling the heat pump power source between PV and grid mains; use PV if the battery voltage of above 25.9V; default to grid mains
+- Relay R3 connects to the heat pump PV switch which turns on the heat pump if the PV voltage is high, say above 27V; default to `OFF`
 
 Ensure that all the relays are connected so that the Arduino `OFF` state corresponds to `NO_POWER`.
+R1 and R3 reside on a relay module bank and can be controlled directly with thr GPIO pins.
+However, the bank requires me to invert the GPIO output states for R1 and R3 to achieve `OFF` == `NO_POWER`.
+R2 is controlled via a relay driver transistor switch.
 
 ## Authors
 
