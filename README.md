@@ -289,7 +289,7 @@ Requirements have evolved. Currently, they are:
 - Control a DPDT relay controlling the heat pump power source, toggling between PV and grid mains; use PV if the battery voltage of above 25.9V; default to grid mains
 - Control a heat pump PV switch which turns on the heat pump if the PV voltage is high, say above 26.7V; default to off
 
-If the Arduino power is turned off, retain the default states.
+Ensure that all the relays are connected so that the Arduino `OFF` state corresponds to `NO_POWER`.
 
 ## Authors
 
