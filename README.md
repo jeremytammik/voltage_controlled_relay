@@ -118,7 +118,14 @@ using the very simple approach described
 in [figure 5](https://electronics.stackexchange.com/a/342185) in the answer
 to [controlling two LEDs with one digital output](https://electronics.stackexchange.com/questions/342178/controlling-two-leds-with-one-digital-output)
 
+### Relay Driver Transistor Switch
 
+[Driving a relay directly](https://maker.pro/arduino/projects/driving-a-relay-with-an-arduino) is
+different from driving a relay module.
+I use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 output pin to the 2N2222 base:
+
+- [Schematic](/img/2023-05-26_relay_driver.jpg)
+- [Circuit board](/img/2023-05-26_relay_driver_schematic.png)
 
 ## Second approach
 
@@ -201,10 +208,6 @@ The timer can be added to ensure that the heat pump does not run around the cloc
 Ulrich also mentioned using [TinkerCAD](https://www.tinkercad.com/) for both electronic schematics and
 3D printing projects, ald also [fritzing.org](https://fritzing.org/).
 
-Oh dear, just noticed that driving a relay is completely different
-from [driving a relay module](https://maker.pro/arduino/projects/driving-a-relay-with-an-arduino).
-We use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 output pin to the 2N2222 base.
-
 ## System Time
 
 The ESP32 supports [system time](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html).
@@ -215,7 +218,7 @@ Set it using `settimeofday`, cf. [test code](https://github.com/espressif/esp-id
 We leave the house for a while in June.
 During our absence, I want the hot water heat pump (wwwp) to run on PV as much as possible.
 Hence, a rather hurried final first implementation and live test before leaving.
-I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver described above:
+I eliminate R1 and just left R2 implemented using the DPDT relay with the relay driver transistor switch described above:
 
 <table>
   <tr>

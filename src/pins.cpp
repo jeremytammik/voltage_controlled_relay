@@ -71,6 +71,7 @@ void dropLoads()
 void setLoads( bool pv, bool hp, bool hppv )
 {
   digitalWrite(LOAD_1_RELAY, !pv);
+  digitalWrite(LOAD_2_LED, hp);
   digitalWrite(LOAD_2_RELAY, hp);
   digitalWrite(LOAD_3_RELAY, hppv);
 }
