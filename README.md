@@ -81,7 +81,7 @@ And since I don't care about differences above 29V, and they hardly occur in my 
 The ADC measurements were jumping up and down pretty erratically.
 I added a 22 uF capacitor between the ADC input sensor pin GPIO34 and ground and the problem went away.
 However, it may be much too big and thus deteriorate the reaction time.
-I need the switch to be fast so that the heat pump does niot notice when it is switched from one opower source to the other.
+I need the switch to be fast so that the heat pump can continue working uninterrupted when it is switched from one opower source to the other.
 Using a [capacitor cischarge calculator](https://www.redcrab-software.com/en/Calculator/Electrics/C-discharge-state),
 I see that 47 nF may be more appropriate, yielding a dischange time of a couple of ms.
 
