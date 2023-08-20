@@ -2,7 +2,7 @@
 // Created 20/08/2023
 // AKK
 
-#include "../include/filter.h"
+#include "filter.h"
 
 MovingAverageFilter::MovingAverageFilter() : m_sum(0), m_currentIndex(0)
 {
@@ -18,7 +18,7 @@ float MovingAverageFilter::append(float value)
     return m_sum / (float)WINDOW_SIZE;
 }
 
-float MovingAverageFilter::clear()
+void MovingAverageFilter::clear()
 {
     int i;
 

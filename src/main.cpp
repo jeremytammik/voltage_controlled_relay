@@ -5,9 +5,12 @@
 #include "util.h"
 #include "timerdelay.h"
 #include "btcontroller.h"
+#include "filter.h"
 
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
+
+MovingAverageFilter avgFilter;
 
 // ADC thresholds to turn on and off relays R1 and R2
 
@@ -76,6 +79,8 @@ void setup()
 
   jsettime(year, month, day, hour, minute, second );
 
+  avgFilter.clear();
+
   // Initialize bluetooth and its delay timer
   btController.init();
   btSendDelay.start();
@@ -91,7 +96,7 @@ void loop()
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  int adc = readVoltage( printIt );
+  int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
   //btController.send("BAT_ADC", String(adc));
 
   State old_state = current_state;

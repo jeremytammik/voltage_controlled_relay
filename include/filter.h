@@ -19,7 +19,7 @@ class MovingAverageFilter
         /**
          * Function resets the values of the MAF to defaults where necessary
         */
-        float clear();
+        void clear();
 
     private:
         int m_sum, m_currentIndex;
