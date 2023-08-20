@@ -294,6 +294,13 @@ R1 and R3 reside on a relay module bank and can be controlled directly with thr 
 However, the bank requires me to invert the GPIO output states for R1 and R3 to achieve `OFF` == `NO_POWER`.
 R2 is controlled via a relay driver transistor switch.
 
+<table>
+  <tr>
+    <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
+    <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
+  </tr>
+</table>
+
 ## Authors
 
 [Allan Kipkirui Koech](https://github.com/allankkoech) in Nairobi,
