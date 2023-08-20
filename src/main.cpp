@@ -11,7 +11,7 @@
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
 
-MovingAverageFilter avgFilter;
+//MovingAverageFilter avgFilter;
 
 // ADC thresholds to turn on and off relays R1 and R2
 
