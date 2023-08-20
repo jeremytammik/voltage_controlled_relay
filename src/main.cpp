@@ -5,7 +5,8 @@
 #include "util.h"
 #include "timerdelay.h"
 #include "btcontroller.h"
-#include "filter.h"
+#include "sort.h"
+
 
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
@@ -79,7 +80,7 @@ void setup()
 
   jsettime(year, month, day, hour, minute, second );
 
-  avgFilter.clear();
+  //avgFilter.clear();
 
   // Initialize bluetooth and its delay timer
   btController.init();
@@ -89,6 +90,11 @@ void setup()
 
 int loopCount = 0;
 int skipPrintFor = 1000;
+const int medianValuesLeftRight = 1;
+const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
+int adcValues[medianWindowSize];
+int adcValuesSorted[medianWindowSize];
+int adcValueIndex = 0;
 
 void loop()
 {
@@ -96,8 +102,30 @@ void loop()
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
+  int adc = readVoltage( printIt );
+  //int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
   //btController.send("BAT_ADC", String(adc));
+
+  // Collect n values for median determination
+
+  if(adcValueIndex < medianWindowSize) {
+    adcValues[adcValueIndex++] = adc;
+    if(adcValueIndex < medianWindowSize) {
+      return;
+    }
+  }
+  for( int i = 0; i < medianWindowSize-1; ++i ) {
+    adcValues[i] = adcValues[i+1];
+  }
+  adcValues[medianWindowSize-1] = adc;
+
+  // Select median value
+
+  for( int i = 0; i < medianWindowSize; ++i ) {
+    adcValuesSorted[i] = adcValues[i];
+  }
+  sortArray(adcValuesSorted, medianWindowSize);
+  adc = adcValuesSorted[medianValuesLeftRight];
 
   State old_state = current_state;
   State new_state = old_state;
