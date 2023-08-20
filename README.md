@@ -32,8 +32,32 @@ Here is the schematic to hook up the voltage divider measuring the 24V battery i
 
 After various attempts, I discovered I have a JM14HS LM2576S module that takes an input range of [8V,36V] and produces a reliable 5V output to feed the ESP32.
 
+## State Machine
 
-## Voltage Divider with Resistor
+In the first approach, we implemented a state machine to manage the relay states and transitions
+(image generated using [Finite State Machine Designer](https://www.madebyevan.com/fsm/)):
+
+<center>
+<img src="img/2023-02-23_state_machine.png" alt="State machine" title="State machine" width="500"/> <!-- 1004 x 312 pixels -->
+</center>
+
+The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
+Or, to be more precise, the state transition does not happen until the trigger persists for a certain amount of time.
+The trigger itself includes a minimum timespan to cause the state change.
+
+We used [YA_FSM](https://github.com/cotestatnt/YA_FSM)
+by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta),
+described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac),
+since it includes functionality to support minimum and maximum timeouts for each state.
+It is also equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762).
+It would be cool to set one up for this project as well.
+That might save a lot of effort implementing real-world tests.
+
+## Voltage Measurement
+
+A surprising number of aspects and components come up to address this:
+
+### Voltage Divider with Resistor
 
 We need to convert the input battery voltage range [24V,31V] to fit into the ESP32 ADC input voltage range [0V,3.3V],
 cf. [ESP32 ADC tutorial &ndash; read analog voltage in Arduino](https://deepbluembedded.com/esp32-adc-tutorial-read-analog-voltage-arduino/).
@@ -60,7 +84,7 @@ map the ADC `int` range [0,4095] to the battery voltage range of ca. [0V,31V].
 This voltage divider translates the voltage range [0V,33V] to the ADC `int` range [0,4095],
 resulting in a resolution of ca. 0.8 mV per bit.
 
-## Voltage Shifter with Zener Diode
+### Voltage Shifter with Zener Diode
 
 Another [level shifting](https://itp.nyu.edu/physcomp/lessons/electronics/level-shifting/) option
 uses Zener diodes to create a [voltage shifter](https://en.wikipedia.org/wiki/Zener_diode#Voltage_shifter).
@@ -76,7 +100,7 @@ Consequently, with the 1:2 10k + 10k resistor-based voltage divider, all voltage
 Luckily, contrary to some statements I've seen, the higher input voltage up to 4V or even 5V did not seem to do any harm.
 And since I don't care about differences above 29V, and they hardly occur in my context, I think I'll leave the current voltage divider in place.
 
-## Voltage Smoothing with a Capacitor
+### Voltage Smoothing with a Capacitor
 
 The ADC measurements were jumping up and down pretty erratically.
 I added a 22 uF capacitor between the ADC input sensor pin GPIO34 and ground and the problem went away.
@@ -85,26 +109,16 @@ I need the switch to be fast so that the heat pump can continue working uninterr
 Using a [capacitor discharge calculator](https://www.redcrab-software.com/en/Calculator/Electrics/C-discharge-state),
 I see that 47 nF may be more appropriate, yielding a dischange time of a couple of ms across 10 kOhm.
 
-### State Machine
+### Software Voltage Smoothing
 
-In the first approach, we used the YA_FSM library to implement a state machine to manage the relay states and transitions
-(image generated using [Finite State Machine Designer](https://www.madebyevan.com/fsm/)):
+First thought was to implement voltage smoothing using a running average.
+However, to remove noise effects from the measurement, an approach using the median is more appropriate,
+cf. [the difference between median and average](https://sciencenotes.org/median-vs-average-know-the-difference-between-them/).
 
-<center>
-<img src="img/2023-02-23_state_machine.png" alt="State machine" title="State machine" width="500"/> <!-- 1004 x 312 pixels -->
-</center>
+## Relay Driver
 
-The transitions are complicated by the fact that each state, once attained, must be retained for a certain minimum amount of time before any state change can occur.
-Or, to be more precise, the state transition does not happen until the trigger persists for a certain amount of time.
-The trigger itself includes a minimum timespan to cause the state change.
-
-We used [YA_FSM](https://github.com/cotestatnt/YA_FSM)
-by [Tolentino Cotesta](https://www.hackster.io/tolentinocotesta),
-described in [Let's learn how to use finite state machine with Arduino](https://www.hackster.io/tolentinocotesta/let-s-learn-how-to-use-finite-state-machine-with-arduino-c524ac),
-since it includes functionality to support minimum and maximum timeouts for each state.
-It is also equipped with a [wokwi simulation](https://wokwi.com/projects/338248486164103762).
-It would be cool to set one up for this project as well.
-That might save a lot of effort implementing real-world tests.
+A relay module consumes ca. 5 mA and can be driven straight from the GPIO pin.
+A naked relay, however, consumes too much current and requires a driver.
 
 ### Driving Relay Module and Two LEDs From Same Pin
 
