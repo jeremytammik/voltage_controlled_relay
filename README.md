@@ -294,13 +294,13 @@ R1 and R3 reside on a relay module bank and can be controlled directly with thr 
 However, the bank requires me to invert the GPIO output states for R1 and R3 to achieve `OFF` == `NO_POWER`.
 R2 is controlled via a relay driver transistor switch.
 
-For some reason, the R2 relay switch started oscillating, so I had to remove it.
+For some reason, the `hp` R2 relay switch started switching back and forth very rapidly, making a buzzing sound, so I removed it and temporarily hardwired the heat pump to PV power.
 Here is the installation after that removal:
 
 <table>
   <tr>
     <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
-    <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
+    <td><img src="img/2023-08-20_approach5b.jpg" width="200"/></td>
   </tr>
 </table>
 
