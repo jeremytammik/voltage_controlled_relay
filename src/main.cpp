@@ -7,7 +7,6 @@
 #include "btcontroller.h"
 #include "sort.h"
 
-
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
 
@@ -31,11 +30,6 @@ const int adcTurnOnHp    = 1400; // 26.5 - 26.7V -- drive heat pump from PV, not
 const int adcTurnOffHppv = 1250; // 26.3 - 26.5V -- turn off heat pump PV switch
 const int adcTurnOnHppv  = 1600; // 26.9 - 27.0V -- turn on heat pump PV switch, so it heats up to the max
 
-// Output variables
-//bool pv_on = false;
-//bool pv_and_hp_on = false;
-//bool pv_and_hp_and_hppv_on = false;
-
 // States
 enum State
 {
@@ -45,17 +39,8 @@ enum State
   PV_AND_HP_AND_HPPV_ON
 };
 
-// Helper for print labels instead integer when state change
+// Print labels far state
 const char * const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
-
-// The current state is determined from the two output variables
-//State current_state()
-//{
-//    if(pv_and_hp_and_hppv_on) { return PV_AND_HP_AND_HPPV_ON; }
-//    else if(pv_and_hp_on) { return PV_AND_HP_ON; }
-//    else if(pv_on) { return PV_ON; }
-//    else return OFF;
-//}
 
 State current_state = OFF;
 
@@ -121,9 +106,7 @@ void loop()
 
   // Select median value
 
-  for( int i = 0; i < medianWindowSize; ++i ) {
-    adcValuesSorted[i] = adcValues[i];
-  }
+  memcpy(adcValuesSorted, adcValues, sizeof(adcValues));
   sortArray(adcValuesSorted, medianWindowSize);
   adc = adcValuesSorted[medianValuesLeftRight];
 
