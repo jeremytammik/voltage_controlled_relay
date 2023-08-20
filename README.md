@@ -294,12 +294,18 @@ R1 and R3 reside on a relay module bank and can be controlled directly with thr 
 However, the bank requires me to invert the GPIO output states for R1 and R3 to achieve `OFF` == `NO_POWER`.
 R2 is controlled via a relay driver transistor switch.
 
+For some reason, the R2 relay switch started oscillating, so I had to remove it.
+Here is the installation after that removal:
+
 <table>
   <tr>
     <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
     <td><img src="img/2023-08-20_approach5a.jpg" width="200"/></td>
   </tr>
 </table>
+
+Maybe more smoothing is needed for measuring the battery voltage?
+Maybe I should use a running average rather than a capacitor, so I would have software control over it and could log the min and max values coming in to see what is going on.
 
 ## Authors
 
