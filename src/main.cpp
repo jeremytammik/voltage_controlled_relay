@@ -99,9 +99,7 @@ void loop()
       return;
     }
   }
-  for( int i = 0; i < medianWindowSize-1; ++i ) {
-    adcValues[i] = adcValues[i+1];
-  }
+  memmove( adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
   adcValues[medianWindowSize-1] = adc;
 
   // Select median value
