@@ -6,11 +6,13 @@
 #include "timerdelay.h"
 #include "btcontroller.h"
 #include "filter.h"
+#include "medianfilter.h"
 
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
 
 MovingAverageFilter avgFilter;
+MedianFilter<int> medianFilter(10);
 
 // ADC thresholds to turn on and off relays R1 and R2
 
@@ -96,7 +98,8 @@ void loop()
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
+  int adc= medianFilter.AddValue(readVoltage( printIt ));
+  // int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
   //btController.send("BAT_ADC", String(adc));
 
   State old_state = current_state;
