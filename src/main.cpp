@@ -23,24 +23,24 @@ BluetoothController btController;
 // 1500; // 26.7 - 26.9V -- drive heat pump from PV, not grid mains
 // 1700; // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
 
-const int adcTurnOffPv    = 300; // 24.9 - 25.2V -- remove all loads from PV system
-const int adcTurnOnPv    = 1000; // 25.9 - 26.2V -- attach moniwonig electricity to PV
-const int adcTurnOffHp   = 1200; // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
-const int adcTurnOnHp    = 1400; // 26.5 - 26.7V -- drive heat pump from PV, not grid mains
+const int adcTurnOffPv = 300;    // 24.9 - 25.2V -- remove all loads from PV system
+const int adcTurnOnPv = 1000;    // 25.9 - 26.2V -- attach moniwonig electricity to PV
+const int adcTurnOffHp = 1200;   // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
+const int adcTurnOnHp = 1400;    // 26.5 - 26.7V -- drive heat pump from PV, not grid mains
 const int adcTurnOffHppv = 1250; // 26.3 - 26.5V -- turn off heat pump PV switch
-const int adcTurnOnHppv  = 1600; // 26.9 - 27.0V -- turn on heat pump PV switch, so it heats up to the max
+const int adcTurnOnHppv = 1600;  // 26.9 - 27.0V -- turn on heat pump PV switch, so it heats up to the max
 
 // States
 enum State
 {
   OFF, // == Start
   PV_ON,
-  PV_AND_HP_ON, 
+  PV_AND_HP_ON,
   PV_AND_HP_AND_HPPV_ON
 };
 
 // Print labels far state
-const char * const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
+const char *const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
 
 State current_state = OFF;
 
@@ -48,7 +48,8 @@ void setup()
 {
   setupPins(); // set up Input/Output
   Serial.begin(115200);
-  while (!Serial) {
+  while (!Serial)
+  {
   } // Needed for native USB port only
 
   Serial.println(F("Starting the Voltage Controlled Switch...\n"));
@@ -59,13 +60,13 @@ void setup()
   int year = 2023;
   int month = 4; // [0,11], January = 0
   int day = 24;
-  int hour = 0; // [0,24]
+  int hour = 0;   // [0,24]
   int minute = 0; // [0,59]
   int second = 0; // [0.59]
 
-  jsettime(year, month, day, hour, minute, second );
+  jsettime(year, month, day, hour, minute, second);
 
-  //avgFilter.clear();
+  // avgFilter.clear();
 
   // Initialize bluetooth and its delay timer
   btController.init();
@@ -83,73 +84,123 @@ int adcValueIndex = 0;
 
 MedianFilter<int> medianFilter(medianWindowSize);
 
-
 void loop()
 {
   // Print status every 1000 ms
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  // Median Filter
-  int adc= medianFilter.AddValue(readVoltage( printIt ));
-  int adc = readVoltage( printIt );
-  //int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
-  //btController.send("BAT_ADC", String(adc));
+  // Median Filter [Uncomment next line to use it]
+  // int adc= medianFilter.AddValue(readVoltage( printIt ));
+  int adc = readVoltage(printIt);
+  // int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
+  // btController.send("BAT_ADC", String(adc));
 
   // Collect n values for median determination
 
-  if(adcValueIndex < medianWindowSize) {
+  // START comment block if using the median filter lib added
+  if (adcValueIndex < medianWindowSize)
+  {
     adcValues[adcValueIndex++] = adc;
-    if(adcValueIndex < medianWindowSize) {
+    if (adcValueIndex < medianWindowSize)
+    {
       return;
     }
   }
-  memmove( adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
-  adcValues[medianWindowSize-1] = adc;
+  memmove(adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
+  adcValues[medianWindowSize - 1] = adc;
 
   // Select median value
 
   memcpy(adcValuesSorted, adcValues, sizeof(adcValues));
   sortArray(adcValuesSorted, medianWindowSize);
   adc = adcValuesSorted[medianValuesLeftRight];
+  // END comment block if using the median filter lib added
 
   State old_state = current_state;
   State new_state = old_state;
-  if( OFF == old_state)
+  if (OFF == old_state)
   {
-    if( adcTurnOnHppv < adc ) { new_state = PV_AND_HP_AND_HPPV_ON; }
-    else if( adcTurnOnHp < adc ) { new_state = PV_AND_HP_ON; }
-    else if( adcTurnOnPv < adc ) { new_state = PV_ON; }
+    if (adcTurnOnHppv < adc)
+    {
+      new_state = PV_AND_HP_AND_HPPV_ON;
+    }
+    else if (adcTurnOnHp < adc)
+    {
+      new_state = PV_AND_HP_ON;
+    }
+    else if (adcTurnOnPv < adc)
+    {
+      new_state = PV_ON;
+    }
   }
-  else if( PV_ON == old_state)
+  else if (PV_ON == old_state)
   {
-    if( adcTurnOnHppv < adc ) { new_state = PV_AND_HP_AND_HPPV_ON; }
-    else if( adcTurnOnHp < adc ) { new_state = PV_AND_HP_ON; }
-    else if( adcTurnOffPv > adc ) { new_state = OFF; }
+    if (adcTurnOnHppv < adc)
+    {
+      new_state = PV_AND_HP_AND_HPPV_ON;
+    }
+    else if (adcTurnOnHp < adc)
+    {
+      new_state = PV_AND_HP_ON;
+    }
+    else if (adcTurnOffPv > adc)
+    {
+      new_state = OFF;
+    }
   }
-  else if( PV_AND_HP_ON == old_state)
+  else if (PV_AND_HP_ON == old_state)
   {
-    if( adcTurnOnHppv < adc ) { new_state = PV_AND_HP_AND_HPPV_ON; }
-    else if( adcTurnOffPv > adc ) { new_state = OFF; }
-    else if( adcTurnOffHp > adc ) { new_state = PV_ON; }
+    if (adcTurnOnHppv < adc)
+    {
+      new_state = PV_AND_HP_AND_HPPV_ON;
+    }
+    else if (adcTurnOffPv > adc)
+    {
+      new_state = OFF;
+    }
+    else if (adcTurnOffHp > adc)
+    {
+      new_state = PV_ON;
+    }
   }
-  else if( PV_AND_HP_AND_HPPV_ON == old_state)
+  else if (PV_AND_HP_AND_HPPV_ON == old_state)
   {
-    if( adcTurnOffPv > adc ) { new_state = OFF; }
-    else if( adcTurnOffHp > adc ) { new_state = PV_ON; }
-    else if( adcTurnOffHppv > adc ) { new_state = PV_AND_HP_ON; }
+    if (adcTurnOffPv > adc)
+    {
+      new_state = OFF;
+    }
+    else if (adcTurnOffHp > adc)
+    {
+      new_state = PV_ON;
+    }
+    else if (adcTurnOffHppv > adc)
+    {
+      new_state = PV_AND_HP_ON;
+    }
   }
 
-  if( (old_state != new_state) || printIt ) {
-    Serialprintln( "ADC %d - state %s --> %s",
-      adc, stateName[old_state], stateName[new_state]);
+  if ((old_state != new_state) || printIt)
+  {
+    Serialprintln("ADC %d - state %s --> %s",
+                  adc, stateName[old_state], stateName[new_state]);
 
-    if( old_state != new_state ) {
-      switch (new_state) {
-      case OFF: dropLoads(); break;
-      case PV_ON: setLoads( true, false, false ); break;
-      case PV_AND_HP_ON: setLoads( true, true, false ); break;
-      case PV_AND_HP_AND_HPPV_ON: setLoads( true, true, true ); break;
+    if (old_state != new_state)
+    {
+      switch (new_state)
+      {
+      case OFF:
+        dropLoads();
+        break;
+      case PV_ON:
+        setLoads(true, false, false);
+        break;
+      case PV_AND_HP_ON:
+        setLoads(true, true, false);
+        break;
+      case PV_AND_HP_AND_HPPV_ON:
+        setLoads(true, true, true);
+        break;
       }
       current_state = new_state;
     }
