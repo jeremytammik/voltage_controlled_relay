@@ -14,21 +14,22 @@ BluetoothController btController;
 
 // ADC thresholds to turn on and off relays R1 and R2
 
-//  300; // 24.9 - 25.2V -- remove all loads from PV system
-// 1000; // 25.9 - 26.2V -- attach moniwonig electricity to PV
-// 1200; // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
-// 1250; // 26.3 - 26.5V -- turn off heat pump PV switch
-// 1300; // 26.3 - 26.6V -- drive heat pump from grid mains, not PV
-// 1400; // 26.5 - 26.7V -- drive heat pump from PV, not grid mains
-// 1500; // 26.7 - 26.9V -- drive heat pump from PV, not grid mains
-// 1700; // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
+//  300 // 24.9 - 25.2V -- remove all loads from PV system
+// 1000 // 25.9 - 26.2V -- attach moniwonig electricity to PV
+// 1200 // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
+// 1250 // 26.3 - 26.5V -- turn off heat pump PV switch
+// 1300 // 26.3 - 26.6V -- drive heat pump from grid mains, not PV
+// 1400 // 26.5 - 26.7V -- drive heat pump from PV, not grid mains
+// 1500 // 26.7 - 26.9V -- drive heat pump from PV, not grid mains
+// 1600 // 26.9 - 27.0V
+// 1700 // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
 
-const int adcTurnOffPv = 300;    // 24.9 - 25.2V -- remove all loads from PV system
-const int adcTurnOnPv = 1000;    // 25.9 - 26.2V -- attach moniwonig electricity to PV
-const int adcTurnOffHp = 1200;   // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
-const int adcTurnOnHp = 1400;    // 26.5 - 26.7V -- drive heat pump from PV, not grid mains
+const int adcTurnOffPv    = 300; // 24.9 - 25.2V -- remove all loads from PV system
+const int adcTurnOnPv    = 1000; // 25.9 - 26.2V -- attach moniwonig electricity to PV
+const int adcTurnOffHp   = 1200; // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
+const int adcTurnOnHp    = 1500; // 26.7 - 26.9V -- drive heat pump from PV, not grid mains
 const int adcTurnOffHppv = 1250; // 26.3 - 26.5V -- turn off heat pump PV switch
-const int adcTurnOnHppv = 1600;  // 26.9 - 27.0V -- turn on heat pump PV switch, so it heats up to the max
+const int adcTurnOnHppv  = 1700; // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
 
 // States
 enum State
@@ -76,7 +77,10 @@ void setup()
 
 int loopCount = 0;
 int skipPrintFor = 1000;
-const int medianValuesLeftRight = 1;
+
+// Keep track of n ADC values for median calculation
+
+const int medianValuesLeftRight = 2;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
 int adcValues[medianWindowSize];
 int adcValuesSorted[medianWindowSize];
@@ -220,5 +224,5 @@ void loop()
   }
   */
 
-  delay(1); // sleep very briefly, need fast switch for heat pump
+  delay(5); // sleep very briefly, need fast switch for heat pump
 }
