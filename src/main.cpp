@@ -5,14 +5,12 @@
 #include "util.h"
 #include "timerdelay.h"
 #include "btcontroller.h"
-#include "filter.h"
+// #include "filter.h"
 #include "medianfilter.h"
+#include "sort.h"
 
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
-
-MovingAverageFilter avgFilter;
-MedianFilter<int> medianFilter(10);
 
 // ADC thresholds to turn on and off relays R1 and R2
 
@@ -32,11 +30,6 @@ const int adcTurnOnHp    = 1400; // 26.5 - 26.7V -- drive heat pump from PV, not
 const int adcTurnOffHppv = 1250; // 26.3 - 26.5V -- turn off heat pump PV switch
 const int adcTurnOnHppv  = 1600; // 26.9 - 27.0V -- turn on heat pump PV switch, so it heats up to the max
 
-// Output variables
-//bool pv_on = false;
-//bool pv_and_hp_on = false;
-//bool pv_and_hp_and_hppv_on = false;
-
 // States
 enum State
 {
@@ -46,17 +39,8 @@ enum State
   PV_AND_HP_AND_HPPV_ON
 };
 
-// Helper for print labels instead integer when state change
+// Print labels far state
 const char * const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
-
-// The current state is determined from the two output variables
-//State current_state()
-//{
-//    if(pv_and_hp_and_hppv_on) { return PV_AND_HP_AND_HPPV_ON; }
-//    else if(pv_and_hp_on) { return PV_AND_HP_ON; }
-//    else if(pv_on) { return PV_ON; }
-//    else return OFF;
-//}
 
 State current_state = OFF;
 
@@ -81,7 +65,7 @@ void setup()
 
   jsettime(year, month, day, hour, minute, second );
 
-  avgFilter.clear();
+  //avgFilter.clear();
 
   // Initialize bluetooth and its delay timer
   btController.init();
@@ -91,6 +75,14 @@ void setup()
 
 int loopCount = 0;
 int skipPrintFor = 1000;
+const int medianValuesLeftRight = 1;
+const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
+int adcValues[medianWindowSize];
+int adcValuesSorted[medianWindowSize];
+int adcValueIndex = 0;
+
+MedianFilter<int> medianFilter(medianWindowSize);
+
 
 void loop()
 {
@@ -98,9 +90,28 @@ void loop()
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
+  // Median Filter
   int adc= medianFilter.AddValue(readVoltage( printIt ));
-  // int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
+  int adc = readVoltage( printIt );
+  //int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
   //btController.send("BAT_ADC", String(adc));
+
+  // Collect n values for median determination
+
+  if(adcValueIndex < medianWindowSize) {
+    adcValues[adcValueIndex++] = adc;
+    if(adcValueIndex < medianWindowSize) {
+      return;
+    }
+  }
+  memmove( adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
+  adcValues[medianWindowSize-1] = adc;
+
+  // Select median value
+
+  memcpy(adcValuesSorted, adcValues, sizeof(adcValues));
+  sortArray(adcValuesSorted, medianWindowSize);
+  adc = adcValuesSorted[medianValuesLeftRight];
 
   State old_state = current_state;
   State new_state = old_state;
