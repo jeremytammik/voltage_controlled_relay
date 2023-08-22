@@ -72,7 +72,16 @@ void setup()
 }
 
 int loopCount = 0;
-int skipPrintFor = 1000;
+int loopDelayMs = 3; // wait x milliseconds before next loop iteration
+int loopIterationsPerSecond = 1000 * loopDelayMs;
+int skipPrintFor = 1000; // print status once in 1000 loop iterations
+
+// Wait a while before switching on again after switching off;
+// switching off, however, is executed immediately:
+
+int stayOffForSeconds = 180; // pause x seconds before switching on again
+int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
+int stayOffCounter = 0;
 
 // Keep track of n ADC values for median calculation
 
@@ -86,8 +95,6 @@ MedianFilter<int> medianFilter(medianWindowSize);
 
 void loop()
 {
-  // Print status every 1000 ms
-
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
   int adc = readVoltage(printIt);
@@ -125,69 +132,75 @@ void loop()
   State new_state = old_state;
   if (OFF == old_state)
   {
-    if (adcTurnOnHppv < adc)
+    if( adc > adcTurnOnHppv )
     {
       new_state = PV_AND_HP_AND_HPPV_ON;
     }
-    else if (adcTurnOnHp < adc)
+    else if( adc > adcTurnOnHp )
     {
       new_state = PV_AND_HP_ON;
     }
-    else if (adcTurnOnPv < adc)
+    else if( adc > adcTurnOnPv )
     {
       new_state = PV_ON;
     }
   }
   else if (PV_ON == old_state)
   {
-    if (adcTurnOnHppv < adc)
+    if( adc > adcTurnOnHppv )
     {
       new_state = PV_AND_HP_AND_HPPV_ON;
     }
-    else if (adcTurnOnHp < adc)
+    else if( adc > adcTurnOnHp)
     {
       new_state = PV_AND_HP_ON;
     }
-    else if (adcTurnOffPv > adc)
+    else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
+      stayOffCounter = stayOffForIterations;
     }
   }
   else if (PV_AND_HP_ON == old_state)
   {
-    if (adcTurnOnHppv < adc)
+    if( adc > adcTurnOnHppv )
     {
       new_state = PV_AND_HP_AND_HPPV_ON;
     }
-    else if (adcTurnOffPv > adc)
+    else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
+      stayOffCounter = stayOffForIterations;
     }
-    else if (adcTurnOffHp > adc)
+    else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
+      stayOffCounter = stayOffForIterations;
     }
   }
   else if (PV_AND_HP_AND_HPPV_ON == old_state)
   {
-    if (adcTurnOffPv > adc)
+    if( adc < adcTurnOffPv )
     {
       new_state = OFF;
+      stayOffCounter = stayOffForIterations;
     }
-    else if (adcTurnOffHp > adc)
+    else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
+      stayOffCounter = stayOffForIterations;
     }
-    else if (adcTurnOffHppv > adc)
+    else if( adc < adcTurnOffHppv )
     {
       new_state = PV_AND_HP_ON;
+      stayOffCounter = stayOffForIterations;
     }
   }
 
   if ((old_state != new_state) || printIt)
   {
-    Serialprintln("ADC %d - state %s --> %s",
-                  adc, stateName[old_state], stateName[new_state]);
+    Serialprintln("ADC %d - state %s --> %s in %d iterations",
+                  adc, stateName[old_state], stateName[new_state], stayOffCounter);
 
     if (old_state != new_state)
     {
@@ -210,8 +223,9 @@ void loop()
     }
   }
 
-  // Sync the bluetooth controller
   /*
+  // Sync the bluetooth controller
+
   BluetoothData btData = btController.sync();
 
   if(btData.available()) {
