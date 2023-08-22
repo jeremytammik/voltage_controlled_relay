@@ -5,9 +5,7 @@
 #include "util.h"
 #include "timerdelay.h"
 #include "btcontroller.h"
-// #include "filter.h"
-#include "medianfilter.h"
-#include "sort.h"
+#include "filtermedian.h"
 
 TimerDelay btSendDelay(false, 2000);
 BluetoothController btController;
@@ -67,8 +65,6 @@ void setup()
 
   jsettime(year, month, day, hour, minute, second);
 
-  // avgFilter.clear();
-
   // Initialize bluetooth and its delay timer
   btController.init();
   btSendDelay.start();
@@ -80,11 +76,11 @@ int skipPrintFor = 1000;
 
 // Keep track of n ADC values for median calculation
 
-const int medianValuesLeftRight = 2;
+const int medianValuesLeftRight = 20;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
-int adcValues[medianWindowSize];
-int adcValuesSorted[medianWindowSize];
-int adcValueIndex = 0;
+//int adcValues[medianWindowSize];
+//int adcValuesSorted[medianWindowSize];
+//int adcValueIndex = 0;
 
 MedianFilter<int> medianFilter(medianWindowSize);
 
@@ -94,14 +90,17 @@ void loop()
 
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  // Median Filter [Uncomment next line to use it]
-  // int adc= medianFilter.AddValue(readVoltage( printIt ));
   int adc = readVoltage(printIt);
-  // int adc = avgFilter.append(readVoltage( printIt )); // Running the read values through a filter
   // btController.send("BAT_ADC", String(adc));
-
+  adc = medianFilter.AddValue(adc);
+  // btController.send("median", String(adc));
+  if( loopCount < medianWindowSize )
+  {
+    return;
+  }
+  
+  /*
   // Collect n values for median determination
-
   // START comment block if using the median filter lib added
   if (adcValueIndex < medianWindowSize)
   {
@@ -120,6 +119,7 @@ void loop()
   sortArray(adcValuesSorted, medianWindowSize);
   adc = adcValuesSorted[medianValuesLeftRight];
   // END comment block if using the median filter lib added
+  */
 
   State old_state = current_state;
   State new_state = old_state;
@@ -224,5 +224,5 @@ void loop()
   }
   */
 
-  delay(5); // sleep very briefly, need fast switch for heat pump
+  delay(3); // sleep very briefly, need fast switch for heat pump
 }

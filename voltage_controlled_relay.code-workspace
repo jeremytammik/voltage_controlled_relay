@@ -1,16 +1,9 @@
 {
 	"folders": [
-		{
-			"path": "../../../../Documents/PlatformIO/Projects/Blink_LED"
-		},
-		{
-			"name": "voltage_controlled_relay",
-			"path": "."
-		},
-		{
-			"name": "size_of_double",
-			"path": "../../../../Documents/PlatformIO/Projects/size_of_double"
-		}
-	],
+    {
+      "name": "voltage_controlled_relay",
+      "path": "."
+    }
+  ],
 	"settings": {}
 }

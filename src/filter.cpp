@@ -2,7 +2,7 @@
 // Created 20/08/2023
 // AKK
 
-#include "filter.h"
+#include "filteraverage.h"
 
 MovingAverageFilter::MovingAverageFilter() : m_sum(0), m_currentIndex(0)
 {
