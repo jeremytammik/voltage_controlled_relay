@@ -7,8 +7,22 @@
 #include "btcontroller.h"
 #include "filtermedian.h"
 
-TimerDelay btSendDelay(false, 2000);
-BluetoothController btController;
+// Looping and timer control
+
+int loopCount = 0;
+int loopDelayMs = 3; // wait x milliseconds before next loop iteration
+int loopIterationsPerSecond = 1000 * loopDelayMs;
+int skipPrintFor = 1000; // print status once in 1000 loop iterations
+
+// Wait a while before switching on again after switching off;
+// switching off, however, is executed immediately:
+
+int stayOffForSeconds = 180; // pause x seconds before switching on again
+int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
+unsigned int stayOffCounter = 0;
+
+//TimerDelay btSendDelay(false, 2000);
+//BluetoothController btController;
 
 // ADC thresholds to turn on and off relays R1 and R2
 
@@ -43,96 +57,8 @@ const char *const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND
 
 State current_state = OFF;
 
-void setup()
+State getNewState( int adc, State old_state )
 {
-  setupPins(); // set up Input/Output
-  Serial.begin(115200);
-  while (!Serial)
-  {
-  } // Needed for native USB port only
-
-  Serial.println(F("Starting the Voltage Controlled Switch...\n"));
-
-  dropLoads();
-  current_state = OFF;
-
-  int year = 2023;
-  int month = 4; // [0,11], January = 0
-  int day = 24;
-  int hour = 0;   // [0,24]
-  int minute = 0; // [0,59]
-  int second = 0; // [0.59]
-
-  jsettime(year, month, day, hour, minute, second);
-
-  // Initialize bluetooth and its delay timer
-  btController.init();
-  btSendDelay.start();
-  btController.sendInfo("Initializing voltage_controlled_relay...");
-}
-
-int loopCount = 0;
-int loopDelayMs = 3; // wait x milliseconds before next loop iteration
-int loopIterationsPerSecond = 1000 * loopDelayMs;
-int skipPrintFor = 1000; // print status once in 1000 loop iterations
-
-// Wait a while before switching on again after switching off;
-// switching off, however, is executed immediately:
-
-int stayOffForSeconds = 180; // pause x seconds before switching on again
-int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
-unsigned int stayOffCounter = 0;
-
-// Keep track of n ADC values for median calculation
-
-const int medianValuesLeftRight = 20;
-const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
-//int adcValues[medianWindowSize];
-//int adcValuesSorted[medianWindowSize];
-//int adcValueIndex = 0;
-
-MedianFilter<int> medianFilter(medianWindowSize);
-
-void loop()
-{
-  bool printIt = (0 == (++loopCount % skipPrintFor));
-
-  int adc = readVoltage(printIt);
-  // btController.send("BAT_ADC", String(adc));
-  adc = medianFilter.AddValue(adc);
-  // btController.send("median", String(adc));
-  if( loopCount < medianWindowSize )
-  {
-    return;
-  }
-  
-  if( 0 < stayOffCounter ) {
-    --stayOffCounter;
-  }
-
-  /*
-  // Collect n values for median determination
-  // START comment block if using the median filter lib added
-  if (adcValueIndex < medianWindowSize)
-  {
-    adcValues[adcValueIndex++] = adc;
-    if (adcValueIndex < medianWindowSize)
-    {
-      return;
-    }
-  }
-  memmove(adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
-  adcValues[medianWindowSize - 1] = adc;
-
-  // Select median value
-
-  memcpy(adcValuesSorted, adcValues, sizeof(adcValues));
-  sortArray(adcValuesSorted, medianWindowSize);
-  adc = adcValuesSorted[medianValuesLeftRight];
-  // END comment block if using the median filter lib added
-  */
-
-  State old_state = current_state;
   State new_state = old_state;
   if (OFF == old_state)
   {
@@ -200,13 +126,93 @@ void loop()
       stayOffCounter = stayOffForIterations;
     }
   }
+  return new_state;  
+}
 
-  if ((old_state != new_state) || printIt)
+void setup()
+{
+  setupPins(); // set up Input/Output
+  Serial.begin(115200);
+  while (!Serial)
+  {
+  } // Needed for native USB port only
+
+  Serial.println(F("Starting the Voltage Controlled Switch...\n"));
+
+  dropLoads();
+  current_state = OFF;
+
+  int year = 2023;
+  int month = 4; // [0,11], January = 0
+  int day = 24;
+  int hour = 0;   // [0,24]
+  int minute = 0; // [0,59]
+  int second = 0; // [0.59]
+
+  jsettime(year, month, day, hour, minute, second);
+
+  /*
+  // Initialize bluetooth and its delay timer
+  btController.init();
+  btSendDelay.start();
+  btController.sendInfo("Initializing voltage_controlled_relay...");
+  */
+}
+
+// Read ADC via median filter
+
+const int medianValuesLeftRight = 20;
+const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
+
+MedianFilter<int> medianFilter(medianWindowSize);
+
+void loop()
+{
+  bool printIt = (0 == (++loopCount % skipPrintFor));
+
+  int adc = readVoltage(printIt);
+  // btController.send("BAT_ADC", String(adc));
+  adc = medianFilter.AddValue(adc);
+  // btController.send("median", String(adc));
+  if( loopCount < medianWindowSize )
+  {
+    return;
+  }
+  
+  if( 0 < stayOffCounter ) {
+    --stayOffCounter;
+  }
+
+  /*
+  // Collect n values for median determination
+  // START comment block if using the median filter lib added
+  if (adcValueIndex < medianWindowSize)
+  {
+    adcValues[adcValueIndex++] = adc;
+    if (adcValueIndex < medianWindowSize)
+    {
+      return;
+    }
+  }
+  memmove(adcValues, adcValues + 1, (medianWindowSize - 1) * sizeof(int));
+  adcValues[medianWindowSize - 1] = adc;
+
+  // Select median value
+
+  memcpy(adcValuesSorted, adcValues, sizeof(adcValues));
+  sortArray(adcValuesSorted, medianWindowSize);
+  adc = adcValuesSorted[medianValuesLeftRight];
+  // END comment block if using the median filter lib added
+  */
+
+  State new_state = getNewState( adc, current_state );
+
+  if( (new_state != current_state ) || printIt )
   {
     Serialprintln("ADC %d - state %s --> %s in %d iterations",
-                  adc, stateName[old_state], stateName[new_state], stayOffCounter);
+                  adc, stateName[current_state], stateName[new_state], stayOffCounter);
 
-    if( (old_state != new_state) && (0 != stayOffCounter) )
+    if( (current_state != new_state) && (0 != stayOffCounter) )
     {
       switch (new_state)
       {
