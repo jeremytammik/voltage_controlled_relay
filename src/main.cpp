@@ -81,7 +81,7 @@ int skipPrintFor = 1000; // print status once in 1000 loop iterations
 
 int stayOffForSeconds = 180; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
-int stayOffCounter = 0;
+unsigned int stayOffCounter = 0;
 
 // Keep track of n ADC values for median calculation
 
@@ -106,6 +106,10 @@ void loop()
     return;
   }
   
+  if( 0 < stayOffCounter ) {
+    --stayOffCounter;
+  }
+
   /*
   // Collect n values for median determination
   // START comment block if using the median filter lib added
@@ -202,7 +206,7 @@ void loop()
     Serialprintln("ADC %d - state %s --> %s in %d iterations",
                   adc, stateName[old_state], stateName[new_state], stayOffCounter);
 
-    if (old_state != new_state)
+    if( (old_state != new_state) && (0 != stayOffCounter) )
     {
       switch (new_state)
       {

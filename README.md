@@ -145,6 +145,12 @@ I use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 output
 - [Schematic](/img/2023-05-26_relay_driver.jpg)
 - [Circuit board](/img/2023-05-26_relay_driver_schematic.png)
 
+### Timer Take Two
+
+- [Using `millis` for timing. A beginners guide](https://forum.arduino.cc/t/using-millis-for-timing-a-beginners-guide/483573)
+- [Demonstration code for several things at the same time](https://forum.arduino.cc/t/demonstration-code-for-several-things-at-the-same-time/217158)
+
+
 ## Second approach
 
 Rewrote the switch using a very simple state machine implemented manually with no librasry and no timer settings.
