@@ -24,7 +24,7 @@ unsigned int stayOffCounter = 0;
 //TimerDelay btSendDelay(false, 2000);
 //BluetoothController btController;
 
-// ADC thresholds to turn on and off relays R1 and R2
+// ADC thresholds to turn on and off relays
 
 //  300 // 24.9 - 25.2V -- remove all loads from PV system
 // 1000 // 25.9 - 26.2V -- attach moniwonig electricity to PV
