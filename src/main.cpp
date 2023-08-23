@@ -17,7 +17,7 @@ int skipPrintFor = 1000; // print status once in 1000 loop iterations
 // Wait a while before switching on again after switching off;
 // switching off, however, is executed immediately:
 
-int stayOffForSeconds = 180; // pause x seconds before switching on again
+int stayOffForSeconds = 10; // 180; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
 unsigned int stayOffCounter = 0;
 
@@ -61,7 +61,7 @@ State current_state = OFF;
 void printStatus( State new_state )
 {
   Serialprintln( 
-    "ADC %d - state %s --> %s (countdown %d )",
+    "ADC %d - state %s --> %s (countdown %d)",
     adc, stateName[current_state], stateName[new_state], 
     stayOffCounter );
 }
