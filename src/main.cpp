@@ -21,6 +21,15 @@ int stayOffForSeconds = 180; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
 unsigned int stayOffCounter = 0;
 
+// startCountdown -- Start countdown only if it is not already running
+
+void startCountdown()
+{
+  if( 0 == stayOffCounter ) { 
+    stayOffCounter = stayOffForIterations; 
+  }
+}
+
 //TimerDelay btSendDelay(false, 2000);
 //BluetoothController btController;
 
@@ -88,7 +97,7 @@ State getNewState( int adc, State old_state )
     else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
   }
   else if (PV_AND_HP_ON == old_state)
@@ -100,12 +109,12 @@ State getNewState( int adc, State old_state )
     else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
     else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
   }
   else if (PV_AND_HP_AND_HPPV_ON == old_state)
@@ -113,17 +122,17 @@ State getNewState( int adc, State old_state )
     if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
     else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
     else if( adc < adcTurnOffHppv )
     {
       new_state = PV_AND_HP_ON;
-      stayOffCounter = stayOffForIterations;
+      startCountdown();
     }
   }
   return new_state;  
@@ -209,15 +218,17 @@ void loop()
 
   if( (new_state != current_state ) || printIt )
   {
-    Serialprintln("ADC %d - state %s --> %s in %d iterations",
-                  adc, stateName[current_state], stateName[new_state], stayOffCounter);
-
     // Go to lower state immediately;
     // take a break before going to a higher state:
 
     if( (new_state < current_state)
       || ( (new_state > current_state) && (0 == stayOffCounter) ) )
     {
+      Serialprintln( 
+        "ADC %d - state %s --> %s (countdown %d )",
+        adc, stateName[current_state], stateName[new_state], 
+        stayOffCounter );
+
       switch (new_state)
       {
       case OFF:
