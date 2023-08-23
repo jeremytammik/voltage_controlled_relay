@@ -142,14 +142,15 @@ void setup()
   dropLoads();
   current_state = OFF;
 
+  /*
   int year = 2023;
   int month = 4; // [0,11], January = 0
   int day = 24;
   int hour = 0;   // [0,24]
   int minute = 0; // [0,59]
   int second = 0; // [0.59]
-
   jsettime(year, month, day, hour, minute, second);
+  */
 
   /*
   // Initialize bluetooth and its delay timer
@@ -163,7 +164,6 @@ void setup()
 
 const int medianValuesLeftRight = 20;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
-
 MedianFilter<int> medianFilter(medianWindowSize);
 
 void loop()
@@ -212,7 +212,11 @@ void loop()
     Serialprintln("ADC %d - state %s --> %s in %d iterations",
                   adc, stateName[current_state], stateName[new_state], stayOffCounter);
 
-    if( (current_state != new_state) && (0 != stayOffCounter) )
+    // Go to lower state immediately;
+    // take a break before going to a higher state:
+
+    if( (new_state < current_state)
+      || ( (new_state > current_state) && (0 == stayOffCounter) ) )
     {
       switch (new_state)
       {
