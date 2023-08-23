@@ -21,15 +21,6 @@ int stayOffForSeconds = 180; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
 unsigned int stayOffCounter = 0;
 
-// startCountdown -- Start countdown only if it is not already running
-
-void startCountdown()
-{
-  if( 0 == stayOffCounter ) { 
-    stayOffCounter = stayOffForIterations; 
-  }
-}
-
 //TimerDelay btSendDelay(false, 2000);
 //BluetoothController btController;
 
@@ -45,6 +36,7 @@ void startCountdown()
 // 1600 // 26.9 - 27.0V
 // 1700 // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
 
+int adc; // current ADC measurement
 const int adcTurnOffPv    = 300; // 24.9 - 25.2V -- remove all loads from PV system
 const int adcTurnOnPv    = 1000; // 25.9 - 26.2V -- attach moniwonig electricity to PV
 const int adcTurnOffHp   = 1200; // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
@@ -65,6 +57,24 @@ enum State
 const char *const stateName[] PROGMEM = {"OFF", "PV_ON", "PV_AND_HP_ON", "PV_AND_HP_AND_HPPV_ON"};
 
 State current_state = OFF;
+
+void printStatus( State new_state )
+{
+  Serialprintln( 
+    "ADC %d - state %s --> %s (countdown %d )",
+    adc, stateName[current_state], stateName[new_state], 
+    stayOffCounter );
+}
+
+// startCountdown -- Start countdown only if it is not already running
+
+void startCountdown( State old_state, State new_state )
+{
+  if( 0 == stayOffCounter ) { 
+    stayOffCounter = stayOffForIterations;
+    printStatus( new_state );    
+  }
+}
 
 State getNewState( int adc, State old_state )
 {
@@ -97,7 +107,7 @@ State getNewState( int adc, State old_state )
     else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
   }
   else if (PV_AND_HP_ON == old_state)
@@ -109,12 +119,12 @@ State getNewState( int adc, State old_state )
     else if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
     else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
   }
   else if (PV_AND_HP_AND_HPPV_ON == old_state)
@@ -122,17 +132,17 @@ State getNewState( int adc, State old_state )
     if( adc < adcTurnOffPv )
     {
       new_state = OFF;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
     else if( adc < adcTurnOffHp )
     {
       new_state = PV_ON;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
     else if( adc < adcTurnOffHppv )
     {
       new_state = PV_AND_HP_ON;
-      startCountdown();
+      startCountdown( old_state, new_state );
     }
   }
   return new_state;  
@@ -179,7 +189,7 @@ void loop()
 {
   bool printIt = (0 == (++loopCount % skipPrintFor));
 
-  int adc = readVoltage(printIt);
+  adc = readVoltage(printIt);
   // btController.send("BAT_ADC", String(adc));
   adc = medianFilter.AddValue(adc);
   // btController.send("median", String(adc));
@@ -224,10 +234,7 @@ void loop()
     if( (new_state < current_state)
       || ( (new_state > current_state) && (0 == stayOffCounter) ) )
     {
-      Serialprintln( 
-        "ADC %d - state %s --> %s (countdown %d )",
-        adc, stateName[current_state], stateName[new_state], 
-        stayOffCounter );
+      printStatus( new_state );    
 
       switch (new_state)
       {
