@@ -181,7 +181,7 @@ void setup()
 
 // Read ADC via median filter
 
-const int medianValuesLeftRight = 20;
+const int medianValuesLeftRight = 30;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
 MedianFilter<int> medianFilter(medianWindowSize);
 
@@ -270,5 +270,5 @@ void loop()
   }
   */
 
-  delay(3); // sleep very briefly, need fast switch for heat pump
+  delay(5); // sleep very briefly, need fast switch for heat pump
 }
