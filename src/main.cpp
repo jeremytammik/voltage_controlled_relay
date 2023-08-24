@@ -270,5 +270,5 @@ void loop()
   }
   */
 
-  delay(5); // sleep very briefly, need fast switch for heat pump
+  delay(6); // sleep as briefly as possible
 }
