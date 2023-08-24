@@ -270,5 +270,5 @@ void loop()
   }
   */
 
-  delay(6); // sleep as briefly as possible
+  delay(10); // sleep as briefly as possible
 }
