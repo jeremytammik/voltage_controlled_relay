@@ -113,11 +113,11 @@ I returned to the RC low pass filter approach after trying the software-based me
 [Using capacitors to filter out unwanted electrical noise](https://www.arrow.com/en/research-and-events/articles/using-capacitors-to-filter-electrical-noise)
 with a [passive low pass filter](https://www.electronics-tutorials.ws/filter/filter_2.html), the cut-off frequency f is given by
 
-  <center>f = 1 / 2&pi;RC</center>
+&nbsp; f = 1 / 2&pi;RC
 
 Say we would like a cut-off frequency of 20 Hz to remove influences both from very short bursts of noise as well as the hum from 50 Hz grid mains, and given that R is fixed at ca. 10 kOhm by the ADC requirements, a suitable capacitor would have
 
-  <center>C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 uF</center>
+&nbsp; C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 uF
 
 ### Software Voltage Smoothing
 
