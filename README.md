@@ -115,7 +115,7 @@ with a [passive low pass filter](https://www.electronics-tutorials.ws/filter/fil
 
 &nbsp; f = 1 / 2&pi;RC
 
-Say we would like a cut-off frequency of 20 Hz to remove influences both from very short bursts of noise as well as the hum from 50 Hz grid mains, and given that R is fixed at ca. 10 kOhm by the ADC requirements, a suitable capacitor would have
+Say we would like a cut-off frequency of 20 Hz to remove influences both from very short bursts of noise as well as the hum from 50 Hz grid mains, and given that R is fixed at ca. 10 kOhm by the ADC requirements, a suitable capacitor would have about
 
 &nbsp; C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 uF
 
@@ -124,8 +124,8 @@ Say we would like a cut-off frequency of 20 Hz to remove influences both from ve
 First thought was to implement voltage smoothing using a running average.
 However, to remove noise effects from the measurement, an approach using the median is more appropriate,
 cf. [the difference between median and average](https://sciencenotes.org/median-vs-average-know-the-difference-between-them/).
-
 I tried different values for the median smoothing and achieved improvements using a larger median window, e.g., 401 measurement values taken with a 3 ms loop delay.
+However, I still experience frequent spurious switching off, so I moved back to the voltage smoothing with a capacitor again.
 
 ## Relay Driver
 
