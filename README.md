@@ -109,11 +109,23 @@ I need the switch to be fast so that the heat pump can continue working uninterr
 Using a [capacitor discharge calculator](https://www.redcrab-software.com/en/Calculator/Electrics/C-discharge-state),
 I see that 47 nF may be more appropriate, yielding a dischange time of a couple of ms across 10 kOhm.
 
+I returned to the RC low pass filter approach after trying the software-based median smoothing for several days with moderate success.
+[Using capacitors to filter out unwanted electrical noise](https://www.arrow.com/en/research-and-events/articles/using-capacitors-to-filter-electrical-noise)
+with a [passive low pass filter](https://www.electronics-tutorials.ws/filter/filter_2.html), the cut-off frequency f is given by
+
+  <center>f = 1 / 2&pi;RC</center>
+
+Say we would like a cut-off frequency of 20 Hz to remove influences both from very short bursts of noise as well as the hum from 50 Hz grid mains, and given that R is fixed at ca. 10 kOhm by the ADC requirements, a suitable capacitor would have
+
+  <center>C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 uF</center>
+
 ### Software Voltage Smoothing
 
 First thought was to implement voltage smoothing using a running average.
 However, to remove noise effects from the measurement, an approach using the median is more appropriate,
 cf. [the difference between median and average](https://sciencenotes.org/median-vs-average-know-the-difference-between-them/).
+
+I tried different values for the median smoothing and achieved improvements using a larger median window, e.g., 401 measurement values taken with a 3 ms loop delay.
 
 ## Relay Driver
 

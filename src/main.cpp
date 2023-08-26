@@ -10,8 +10,8 @@
 // Looping and timer control
 
 int loopCount = 0;
-int loopDelayMs = 3; // wait x milliseconds before next loop iteration
-int loopIterationsPerSecond = 1000 * loopDelayMs;
+const int loopDelayMs = 3; // wait x milliseconds before next loop iteration
+const int loopIterationsPerSecond = 1000 * loopDelayMs;
 int skipPrintFor = 1000; // print status once in 1000 loop iterations
 
 // Wait a while before switching on again after switching off;
@@ -182,7 +182,6 @@ void setup()
 
 // Read ADC via median filter
 
-const int loopDelay = 3; // ms
 const int medianValuesLeftRight = 200;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
 MedianFilter<int> medianFilter(medianWindowSize);
@@ -272,5 +271,5 @@ void loop()
   }
   */
 
-  delay(loopDelay); // sleep as briefly as possible
+  delay(loopDelayMs); // sleep as briefly as possible
 }
