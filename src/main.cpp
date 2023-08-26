@@ -182,8 +182,8 @@ void setup()
 
 // Read ADC via median filter
 
-const int loopDelay = 1; // ms
-const int medianValuesLeftRight = 100;
+const int loopDelay = 3; // ms
+const int medianValuesLeftRight = 200;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
 MedianFilter<int> medianFilter(medianWindowSize);
 
