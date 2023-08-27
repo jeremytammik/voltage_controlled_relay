@@ -17,7 +17,7 @@ int skipPrintFor = 1000; // print status once in 1000 loop iterations
 // Wait a while before switching on again after switching off;
 // switching off, however, is executed immediately:
 
-int stayOffForSeconds = 10; // 180; // pause x seconds before switching on again
+int stayOffForSeconds = 10; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
 unsigned int stayOffCounter = 0;
 
@@ -27,7 +27,8 @@ unsigned int stayOffCounter = 0;
 // ADC thresholds to turn on and off relays
 
 //  300  24.9 - 25.2V -- remove all loads from PV system
-//  900  26.1
+//  750  25.8
+//  900  26.0 - 26.1
 // 1000  25.9 - 26.2V -- attach moniwonig electricity to PV
 // 1200  26.3 26.2 - 26.4V -- drive heat pump from grid mains, not PV
 // 1250  26.3 - 26.5V -- turn off heat pump PV switch
@@ -35,15 +36,15 @@ unsigned int stayOffCounter = 0;
 // 1400  26.5 - 26.7V -- drive heat pump from PV, not grid mains
 // 1500  26.7 - 26.9V -- drive heat pump from PV, not grid mains
 // 1600  26.9 - 27.0V
-// 1700  27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
+// 1700  27.1 - 27.2V -- turn on heat pump PV switch
 
 int adc; // current ADC measurement
-const int adcTurnOffPv    = 300; // 24.9 - 25.2V -- remove all loads from PV system
-const int adcTurnOnPv    = 1000; // 25.9 - 26.2V -- attach moniwonig electricity to PV
-const int adcTurnOffHp   = 1100; // 26.2 - 26.4V -- drive heat pump from grid mains, not PV
-const int adcTurnOnHp    = 1500; // 26.7 - 26.9V -- drive heat pump from PV, not grid mains
-const int adcTurnOffHppv = 1200; // 26.3 - 26.5V -- turn off heat pump PV switch
-const int adcTurnOnHppv  = 1700; // 27.1 - 27.2V -- turn on heat pump PV switch, so it heats up to the max
+const int adcTurnOffPv    = 300; // remove all loads from PV system
+const int adcTurnOnPv    =  700; // attach moniwonig electricity to PV
+const int adcTurnOffHp   = 1100; // drive heat pump from grid mains, not PV
+const int adcTurnOnHp    = 1500; // drive heat pump from PV, not grid mains
+const int adcTurnOffHppv = 1200; // turn off heat pump PV switch
+const int adcTurnOnHppv  = 1700; // turn on heat pump PV switch
 
 // States
 enum State
@@ -182,7 +183,7 @@ void setup()
 
 // Read ADC via median filter
 
-const int medianValuesLeftRight = 200;
+const int medianValuesLeftRight = 100;
 const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
 MedianFilter<int> medianFilter(medianWindowSize);
 
