@@ -119,7 +119,7 @@ Say we would like a cut-off frequency of 20 Hz to remove influences both from ve
 
 &nbsp; C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 µF
 
-I still hadd too many spurios switch-offs &ndash; raised the capacitance to 22 µF.
+I still had too many spurious switch-offs, so I raised the capacitance to 22 µF.
 
 ### Software Voltage Smoothing
 
