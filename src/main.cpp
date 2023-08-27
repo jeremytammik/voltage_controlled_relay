@@ -4,13 +4,13 @@
 #include "readvolt.h"
 #include "util.h"
 #include "timerdelay.h"
-#include "btcontroller.h"
+//#include "btcontroller.h"
 #include "filtermedian.h"
 
 // Looping and timer control
 
 int loopCount = 0;
-const int loopDelayMs = 3; // wait x milliseconds before next loop iteration
+const int loopDelayMs = 8; // wait x milliseconds before next loop iteration
 const int loopIterationsPerSecond = 1000 * loopDelayMs;
 int skipPrintFor = 1000; // print status once in 1000 loop iterations
 
@@ -21,6 +21,12 @@ int stayOffForSeconds = 10; // pause x seconds before switching on again
 int stayOffForIterations = stayOffForSeconds * loopIterationsPerSecond;
 unsigned int stayOffCounter = 0;
 
+// Read ADC via median filter
+
+const int medianValuesLeftRight = 500;
+const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
+MedianFilter<int> medianFilter(medianWindowSize);
+
 //TimerDelay btSendDelay(false, 2000);
 //BluetoothController btController;
 
@@ -29,6 +35,7 @@ unsigned int stayOffCounter = 0;
 //  300  24.9 - 25.2V -- remove all loads from PV system
 //  750  25.8
 //  900  26.0 - 26.1
+//  950  26.1
 // 1000  25.9 - 26.2V -- attach moniwonig electricity to PV
 // 1200  26.3 26.2 - 26.4V -- drive heat pump from grid mains, not PV
 // 1250  26.3 - 26.5V -- turn off heat pump PV switch
@@ -180,12 +187,6 @@ void setup()
   btController.sendInfo("Initializing voltage_controlled_relay...");
   */
 }
-
-// Read ADC via median filter
-
-const int medianValuesLeftRight = 100;
-const int medianWindowSize = 1 + 2 * medianValuesLeftRight;
-MedianFilter<int> medianFilter(medianWindowSize);
 
 void loop()
 {

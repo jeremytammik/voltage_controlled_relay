@@ -126,6 +126,9 @@ However, to remove noise effects from the measurement, an approach using the med
 cf. [the difference between median and average](https://sciencenotes.org/median-vs-average-know-the-difference-between-them/).
 I tried different values for the median smoothing and achieved improvements using a larger median window, e.g., 401 measurement values taken with a 3 ms loop delay.
 However, I still experience frequent spurious switching off, so I moved back to the voltage smoothing with a capacitor again.
+I note that the INA226 enables setting of 1, 4, 16, 64, 128, 256, 512, or 1024 individual measurements for averaging, and an A/D conversion time between 140 µs and 8.244 ms.
+So, maybe I should use something similar to the maximum settings available there, e.g. a median window of 1001 and a loop delay of 8.
+
 
 ## Relay Driver
 
