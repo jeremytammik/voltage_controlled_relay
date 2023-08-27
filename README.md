@@ -117,7 +117,9 @@ with a [passive low pass filter](https://www.electronics-tutorials.ws/filter/fil
 
 Say we would like a cut-off frequency of 20 Hz to remove influences both from very short bursts of noise as well as the hum from 50 Hz grid mains, and given that R is fixed at ca. 10 kOhm by the ADC requirements, a suitable capacitor would have about
 
-&nbsp; C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 uF
+&nbsp; C = 1 / (20 &middot; 2&pi; &middot; 10k) = 1/1257120 = 8e-7 = 0.8 µF
+
+I still hadd too many spurios switch-offs &ndash; raised the capacitance to 22 µF.
 
 ### Software Voltage Smoothing
 
