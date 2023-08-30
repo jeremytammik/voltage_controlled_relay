@@ -30,12 +30,14 @@
 
 double vrange = 2 * 3.3; // max ADC range with 1:2 voltage divider
 double vmin = 24.7;
-double vmax = vmin + vrange;
+double vmax = vmin + vrange; // 24.7 + 6.6 = 31.3 is too high
 //double vdiff = vmax - vmin;
 
 int readVoltage( bool printIt ) 
 {
-  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR); // 0..4095
+  // ADC returns values in [0-4095]
+
+  int adc_raw = analogRead(VOLTAGE_INPUT_SENSOR);
 
   double battery_volt = (adc_raw / 4096.0) * vrange + vmin;
 

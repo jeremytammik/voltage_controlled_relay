@@ -40,20 +40,19 @@ MedianFilter<int> medianFilter(medianWindowSize);
 // 1200  26.3 26.2 - 26.4V -- drive heat pump from grid mains, not PV
 // 1250  26.3 - 26.5V -- turn off heat pump PV switch
 // 1300  26.3 - 26.6V -- drive heat pump from grid mains, not PV
-// 1400  26.5 - 26.7V -- drive heat pump from PV, not grid mains
-// 1500  26.7 - 26.9V -- drive heat pump from PV, not grid mains
-// 1600  26.9 - 27.0V
-// 1700  27.1 - 27.2V -- turn on heat pump PV switch
+// 1400  26.4 - 26.5 - 26.7V -- drive heat pump from PV, not grid mains
+// 1500  
+// 1600  26.5
+// 1700  27.0
 
 int adc; // current ADC measurement
 const int adcTurnOffPv    = 300; // remove all loads from PV system
 const int adcTurnOnPv    =  700; // attach moniwonig electricity to PV
 const int adcTurnOffHp   = 1100; // drive heat pump from grid mains, not PV
-const int adcTurnOnHp    = 1500; // drive heat pump from PV, not grid mains
+const int adcTurnOnHp    = 1600; // drive heat pump from PV, not grid mains
 const int adcTurnOffHppv = 1200; // turn off heat pump PV switch
-const int adcTurnOnHppv  = 1700; // turn on heat pump PV switch
+const int adcTurnOnHppv  = 2900; // turn on heat pump PV switch
 
-// States
 enum State
 {
   OFF, // == Start
