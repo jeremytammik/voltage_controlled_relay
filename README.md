@@ -2,7 +2,13 @@
 
 The voltage controlled relay controls a bank of relays based on the voltage of a PV battery.
 The input is the battery voltage in the range [24V,31V].
-This is measured via a voltage divider to turn relays on and off when various thresholds are crossed:
+This is measured via a voltage divider to turn relays on and off when various thresholds are crossed.
+Its purpose is o control a PV system and warm water heat pump WWWP:
+
+- Turn on WWWP when enough power is available, indicated by high voltage
+- Protect the PV system from discharging too far by removing all loads in case of low voltage
+
+Partial table of contents:
 
 - [Board](#board)
 - [Schematic](#schematic)
