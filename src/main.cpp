@@ -52,7 +52,7 @@ const int adcTurnOnPv    =  700; // attach moniwonig electricity to PV
 const int adcTurnOffHp   =  800; // drive heat pump from grid mains, not PV
 const int adcTurnOnHp    = 1600; // drive heat pump from PV, not grid mains
 const int adcTurnOffHppv =  900; // turn off heat pump PV switch
-const int adcTurnOnHppv  = 1700; // turn on heat pump PV switch
+const int adcTurnOnHppv  = 2300; // turn on heat pump PV switch
 
 enum State
 {
