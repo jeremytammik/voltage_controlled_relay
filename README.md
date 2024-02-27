@@ -157,7 +157,7 @@ To take this one step further, I attached two LEDs, one red and one green,
 so that both the OFF and ON states are highlighted visually,
 using the very simple approach described
 in [figure 5](https://electronics.stackexchange.com/a/342185) in the answer
-to [controlling two LEDs with one digital output](https://electronics.stackexchange.com/questions/342178/controlling-two-leds-with-one-digital-output)
+to [controlling two LEDs with one digital output](https://electronics.stackexchange.com/questions/342178/controlling-two-leds-with-one-digital-output).
 
 ### Relay Driver Transistor Switch
 
