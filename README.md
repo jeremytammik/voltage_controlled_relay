@@ -165,8 +165,8 @@ to [controlling two LEDs with one digital output](https://electronics.stackexcha
 different from driving a relay module.
 I use a 2N2222 NPN transistor, a 1N4007 diode, 1k resistor from the ESP32 output pin to the 2N2222 base:
 
-- [Schematic](/img/2023-05-26_relay_driver.jpg)
-- [Circuit board](/img/2023-05-26_relay_driver_schematic.png)
+- [Schematic](/img/2023-05-26_relay_driver_schematic.png)
+- [Circuit board](/img/2023-05-26_relay_driver.jpg)
 
 ### Timer Take Two
 
